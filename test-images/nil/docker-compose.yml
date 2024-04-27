@@ -1,0 +1,20 @@
+version: '3.10'
+services:
+  nil:
+    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/nil
+    container_name: nil
+    volumes:
+      # mount config file
+      - ./NIL.cfg:/cloneDetection/Applications/nil/NIL.config
+
+      # mount config file of BigCloneEval commands (used by entrypoint.py)
+      - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
+
+      # directory: report from detectClones 
+      - ../reports/:/cloneDetection/reports/
+      # directory: final report from evaluateTool 
+      - ../evaluation/:/cloneDetection/evaluation/
+
+      - /home/franzburock/klondetektoren-automatisierung/benchmark/gcj/:/cloneDetection/benchmark/
+    
+    #entrypoint: /bin/bash -c "sleep 900000"

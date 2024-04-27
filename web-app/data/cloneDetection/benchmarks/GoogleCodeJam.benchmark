@@ -1,0 +1,19 @@
+[general]
+pretty_name = Google Code Jam
+
+[container]
+image = ghcr.io/glopix/abcd-images/google-code-jam-benchmark:latest
+benchmark_path = /cloneDetection/benchmark/
+
+[detectClones-defaults]
+benchmark-parts = all
+
+[detectClones-descriptions]
+benchmark-parts = Which contest of Google Code Jam database will be used <br> Valid values: 2022iow, 2022qr, 2022r1a, 2022r1b, 2022r1c, 2022r2, 2022r3, "all" (default);   seperate multiple values by ',', '*' pattern allowed <br> e.g.: 2022r1a, 2022r*
+
+[evaluateTool-defaults]
+min-lines = 
+
+[evaluateTool-descriptions]
+min-lines = Minimum clone size in original lines.
+

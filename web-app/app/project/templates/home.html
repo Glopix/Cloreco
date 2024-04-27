@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+<h1>
+    Automatic Benchmarking of Clone Detectors (ABCD)
+</h1>
+
+<p class="large-text">
+    <span> 
+        This web platform can be used to execute one or multiple code clone detector tools on one or multiple clone benchmark frameworks.
+        Containers are used to run the clone detector tools in an isolated environment while ensuring reproducibility of execution.
+    </span>
+</p>
+
+<p class="large-text">
+    <span>
+        To start, got to the <a href="{{ url_for('main.run') }}">Run</a> page.
+    </span>
+    <br>
+    <span>
+        The current execution progress can be accessed via the <a href="{{ url_for('main.show_logs', logCategory='run') }}">Logs > (Run)</a> page.
+    </span>
+    <br>
+    <span>
+        The results of past runs are stored on the <a href="{{ url_for('main.downloads') }}">Download</a> page.
+    </span>
+</p>
+
+<p class="large-text">
+    Repository: <a href="https://github.com/Glopix/abcd">https://github.com/Glopix/abcd</a>
+</p>
+<p class="large-text">
+    Image repository: <a href="https://github.com/Glopix/abcd-images">https://github.com/Glopix/abcd-images</a>
+</p>
+<p class="large-text">
+    Wiki: <a href="https://github.com/Glopix/abcd/wiki">https://github.com/Glopix/abcd/wiki</a>
+</p>
+
+{% endblock %}

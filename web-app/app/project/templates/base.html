@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %} ABCD {% endblock %}</title>
+    {% block styles %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css" integrity="sha256-6YCxnKHnbrEl6JRkP6Q1A7lmkz0hhN+LfVfeMsKatEE=" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pure.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    {% endblock %}
+    {% block scripts %}
+    <script src="https://kit.fontawesome.com/4e214f0253.js" crossorigin="anonymous"></script>
+    {% endblock %}
+</head>
+<body>
+<div class="site-container">
+    <div id="menu" class="pure-menu menu pure-menu-vertical">
+        <span class="pure-menu-heading">ABCD</span>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+                <a href="{{ url_for('main.index') }}" class="pure-menu-link">Home</a>
+            </li>
+            <li class="pure-menu-item">
+                <a href="{{ url_for('main.run') }}" class="pure-menu-link">Run</a>
+            </li>
+            <li class="pure-menu-item pure-menu-has-children">
+                <a href="{{ url_for('main.show_logs', logCategory='run') }}" class="pure-menu-link">Logs</a>
+                <ul class="pure-menu-children">
+                    <li class="pure-menu-item">
+                        <a href="{{ url_for('main.show_logs', logCategory='run') }}" class="pure-menu-link">Run</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="{{ url_for('main.show_logs', logCategory='imageBuild') }}" class="pure-menu-link">image build</a>
+                    </li>
+                </ul>
+            </li>
+            
+            <li class="pure-menu-item">
+                <a href="{{ url_for('main.downloads') }}" class="pure-menu-link">Downloads</a>
+            </li>
+            
+            <li class="pure-menu-item imprint-link">
+                <a href="{{ url_for('main.imprint') }}" class="pure-menu-link">Imprint</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div id="content" class="content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>

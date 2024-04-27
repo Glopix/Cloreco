@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+
+"""
+This script does nothing.
+"""
+
+if __name__ == '__main__':
+    exit()

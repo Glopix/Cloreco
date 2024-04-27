@@ -1,0 +1,241 @@
+#!/usr/bin/env python3
+"""
+This script reads a CSV output file from a clone detector tool and analyzes the clone pairs it contains.
+It calculates the number of true clones found and the total possible clones within a benchmark directory.
+
+"""
+import argparse
+from pathlib import Path
+from os import environ
+
+# `typing.List` is imported to provide type hints for older Python versions (<= 3.8),
+# ensuring compatibility by explicitly specifying variable types like List[str],
+# which is not natively supported in these versions without the `typing` module.
+from typing import List
+
+BENCHMARK = "Project CodeNet"
+
+class Evaluator():
+    def __init__(self) -> None:
+        args = self.parse_args()
+        self.inputFile = Path(args.input).absolute()
+        self.outputFile = Path(args.output).absolute()
+        self.datasetDirectory = Path(args.dataset_directory)
+        self.options_minimumLines = args.minimum_lines
+        self.totalClones = 0
+        self.trueDetectedClones = 0
+        self.falseDetectedClones = 0
+
+    def parse_args(self) -> argparse.Namespace:
+        """
+        Parses command line arguments.
+
+        Returns:
+            command line arguments passed
+        """
+        parser = argparse.ArgumentParser(
+            description="""Analyzes clone pairs from a CSV file to calculate and precision""")
+        
+        parser.add_argument("-i", "--input", required=False, 
+                            help="csv file containing clone pairs. Defaults to clones.csv in the current script's parent directory (benchmark directory).", 
+                            default=Path(__file__).parent.parent / "clones.csv")
+        parser.add_argument("-o", "--output", required=True, 
+                            help="File to write the report to.")
+        parser.add_argument("--minimum-lines", "--min-lines","--mil", required=False, 
+                            help="Minimum clone size in original lines.", default=0)
+        parser.add_argument("-d", "--dataset-directory", required=False, 
+                        # default directory in Project CodeNet benchmark is /cloneDetection/benchmark/input/
+                        default=Path(__file__).absolute().parent.parent / "input",
+                        help="""Directory in which the benchmark files with clones are stored.""")
+        
+        # ignore unknown args, so the same call as with BCE evaluateTool can be used 
+        # Note: unknown args (e.g. matcher) wont impact the result
+        args, unknown = parser.parse_known_args()
+        return args
+
+    def true_and_false_clones(self, cloneLines: list) -> int:
+        """
+        Counts the number of true and false detected clones.
+        true clone means:   both clones are in the same directory.
+        Otherwise, the clonepair is counted as false detected clone.
+
+        Returns:
+            int: The count of true clones, defined as clone pairs located in the same directory.
+        """
+        alreadyCountedClones = set()
+        trueDetectedClones  = 0
+        falseDetectedClones = 0
+        minLines = self.options_minimumLines
+
+        for pair in cloneLines:
+            split = pair.split(",")
+
+            # line example: 
+            # directoryA, 399166.java, 84, 139, directoryB ,2658272.java, 85, 140
+            try:
+                dirLeft        = split[0]
+                fileLeft       = split[1]
+                lineStartLeft  = int(split[2])
+                lineEndLeft    = int(split[3])
+                dirRight       = split[4]   
+                fileRight      = split[5]
+                lineStartRight = int(split[6])
+                lineEndRight   = int(split[7])
+            except IndexError:
+                continue
+
+            # don't count the same clone multiple times
+            clonePair = f"{dirLeft},{fileLeft},{dirRight},{fileRight}"
+            clonePairReverse = f"{dirRight},{fileRight},{dirLeft},{fileLeft}"
+
+
+            if clonePair in alreadyCountedClones or clonePairReverse in alreadyCountedClones:
+                continue
+            else:
+                alreadyCountedClones.add(clonePair)
+
+                # counts as a true clone if both parts of the pair are in the same directory
+                if dirLeft == dirRight:
+                    if lineEndLeft - lineStartLeft >= minLines or lineEndRight - lineStartRight >= minLines:
+                        trueDetectedClones += 1
+                else:
+                    falseDetectedClones += 1
+
+        return trueDetectedClones, falseDetectedClones
+
+    def total_clones(self) -> int:
+        """
+        Calculate total number of clones.
+        This is done by:
+        - per task directory:
+            - count the number of files (n)
+            - calculate number of clones in this directory = n(n-1)/2
+        - calculate sum of clones in all directories
+
+        Returns:
+            int: The total count of possible clone pairs across all sub directories.
+        """
+        clones = 0
+
+        # sub directory e.g. '3' in input/3/p02015
+        for subDir in self.datasetDirectory.iterdir():
+            if not subDir.is_dir(): continue
+            # problems dir e.g.: 'p02015'
+            for problemDir in subDir.iterdir():
+                if not problemDir.is_dir(): continue
+                files = problemDir.glob("*")
+                files = len(list(files))
+
+                clones += (files * (files-1)) /2
+
+        return int(clones)
+
+    def recall(self) -> int:
+        """
+        calculate and return the recall
+        """
+        return self.trueDetectedClones / self.totalClones
+
+    def precision(self) -> int:
+        """
+        calculate and return the precision
+        """
+        try:
+            return self.trueDetectedClones / (self.trueDetectedClones + self.falseDetectedClones)
+        except ZeroDivisionError:
+            return 0
+    
+    def statistics_tool_header(self) -> List[str]:
+        """
+        return tool header of statistics file
+
+        e.g.:
+
+        -- Tool --
+        Tool: 1 - NiCad
+        Description: NiCad
+        #Clones: 441656
+        """
+        toolName = environ.get('TOOL_NAME', default="NA")
+
+        return [
+            "-- Tool --",
+            f"Tool: 1 - {toolName}",
+            f"Description: {toolName}",
+            f"#Clones: {self.totalClones}"
+        ]
+    
+    def recall_statistics(self) -> List[str]:
+        """
+        create and return the recall statistics for the statistics file
+        e.g.:
+        
+        ================================================================================
+            All Functionalities
+        ================================================================================
+        -- Recall Per Clone Type (type: numDetected / numClones = recall) --
+                    Type-NA: 18358 / 47146 = 0.38938616213464555
+        
+        """
+        return [
+         "",
+         "================================================================================",
+         "    All Functionalities",
+         "================================================================================",
+         "-- Recall Per Clone Type (type: numDetected / numClones = recall) --",
+        f"  Type-NA: {self.trueDetectedClones} / {self.totalClones} = {self.recall()}",
+        f""
+        ]
+    
+    def precision_statistics(self) -> List[str]:
+        """
+        create and return the precision statistics for the statistics file
+        """
+        return [
+         "-- Precision Per Clone Type (type: numDetected / numDetected + numFalseDetected = precision) --",
+        f"  Type-NA: {self.trueDetectedClones} / {self.falseDetectedClones} + {self.falseDetectedClones} = {self.precision()}"
+        ]
+
+
+    def write_statistics_to_file(self) -> None:
+        """
+        Write trueDetectedClones, falseDetectedClones, totalClones, recall and precision to file
+        The structure of the file is similar to the report file generated by Big Clone Eval evaluatTool.
+        """
+        header      = self.statistics_tool_header()
+        recall      = self.recall_statistics()
+        precision   = self.precision_statistics()
+        
+        lines = []
+        lines.extend(header)
+        lines.extend(recall)
+        lines.extend(precision)
+
+        lines = [f"{l}\n" for l in lines]
+
+        with self.outputFile.open("w") as out:
+            out.writelines(lines)
+
+    def evaluate(self):
+        """
+        Evaluate the clone detector tool's results (detected clones) by calculating the recall and precision.
+        Also, write these statistics to the specified --output file.
+        """
+
+        with self.inputFile.open("r") as clonesCSV:
+            cloneLines = clonesCSV.read().splitlines()
+
+        self.trueDetectedClones, self.falseDetectedClones = self.true_and_false_clones(cloneLines)
+        self.totalClones = self.total_clones()
+    
+        #print(f"true recognised clones in {BENCHMARK}: {self.trueDetectedClones}")
+        #print(f"false recognised clones in {BENCHMARK}: {self.falseDetectedClones}")
+        #print(f"total clones in {BENCHMARK}: {self.totalClones}")
+        #print(f"recall: {self.recall()}")
+        #print(f"precision: {self.precision()}")
+
+        self.write_statistics_to_file()
+
+if __name__ == '__main__':
+    evaluator = Evaluator()
+    evaluator.evaluate()

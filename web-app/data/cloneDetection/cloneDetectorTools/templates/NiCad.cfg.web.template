@@ -1,0 +1,41 @@
+[container]
+image = ghcr.io/glopix/abcd-images/nicad
+mountpoint_base = /cloneDetection/
+mountpoint_detector_config = /cloneDetection/Applications/NiCad/config/myconfig.cfg
+mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg
+
+[benchmark-argument-descriptions]
+max_files = Maximum amount of files
+logging_verbose = Save stdout and stderr of the detector tool in a log file?
+
+[benchmark-argument-defaults]
+max_files = 100000
+logging_verbose = False
+
+[detector-argument-descriptions]
+threshold = Maximum difference threshold we are interested in (0.n)
+minsize = Sizes of clones we are interested in, in pretty-printed lines.
+maxsize = Sizes of clones we are interested in, in pretty-printed lines.
+transform = Custom pre-transformation to be applied to potential clones (none, transformname). <br> Where "transformname" is the name of a pre-transformation TXL program txl/transformname.txl in the txl/ subdirectory to be applied to all potential clones. <br> Example: normalize=xmlsortblocks. Means apply the normalizing transformation "txl/xmlsortblocks.txl" to each potential clone before renaming.
+rename = Kind of renaming to be applied (none, blind, consistent). <br> Blind renaming changes every identifier to "X". Consistent renaming consistently renames identifiers to "Xn", where n is a number. Example: rename=consistent.
+filter = Kind of filtering to be applied (none, nonterminal ...). <br> Where each "nonterminal" is the name of a nonterminal in the language grammar. Example: filter="declaration assign_statement". Means filter out [declaration]s and [assign_statement]s from potential clones.
+abstract = Kind of abstraction to be applied (none, nonterminal ...). <br> Where each "nonterminal" is the name of a nonterminal in the language grammar. <br> Example: abstract=expression. Means abstract all [expression]s to the identifier "expression" in potential clones. <br> Abstraction nonterminals presently supported, for C, C#, Java, Python: block - all blocks, including function bodies. <br> declaration - all data declarations. statement - all statements. expression - all expressions. <br> condition - all if/while conditions. literal - all literal constant values.
+normalize = Custom contextual normalizer to be applied to potential clones (none, normname). <br> Where "normname" is the name of a normalizing TXL program txl/normname.txl in the txl/ subdirectory to be applied to all potential clones. Example: normalize=cabstractifconditions. Means apply the normalizing transformation "txl/cabstractifconditions.txl" to each potential clone.
+cluster = Cluster clone pairs into classes. Example: cluster=yes.
+report = Make XML and HTML source reports. Example: report=yes.
+include = Select source files for clone analysis by file pattern.
+exclude = Exclude some source files from the clone analysis by file pattern.
+
+[detector-argument-defaults]
+threshold = 0.3
+minsize = 10
+maxsize = 2500
+transform = none
+rename = none
+filter = none
+abstract = block
+normalize = none
+cluster = yes
+report = yes
+include = 
+exclude =

@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %} configure & run clone detector tools {% endblock %}
+
+{% block content %}
+{% from "macros.html" import allow_linebreaks, display_message_from_server %}
+
+<div class="menu pure-menu-horizontal middle-menu">
+    <ul class="pure-menu-list">
+        <li class="pure-menu-item" title="add a new clone detector tool to this page">
+            <a href="{{ url_for('main.add_detector_tool') }}" class="pure-menu-link white-link">
+                <i class="fa-regular fa-plus fa-2xl"></i> 
+                add new tool
+            </a>
+        </li>
+        <li class="pure-menu-item" title="remove all duplicated tools and reset all tools to default">
+            <a href="{{ url_for('main.reset_workbench') }}" class="pure-menu-link white-link" >
+                <i  class="fa-solid fa-arrow-rotate-left fa-xl"></i> 
+                reset all tools
+            </a>
+        </li>
+    </ul>
+</div>
+
+<form method="post" action="/run" class="pure-form pure-form-stacked" id="run-form">
+    <!-- BEGIN shared bechmarks config for all detector tools -->
+    <legend class="benchmarks-legend">Benchmarks</legend>
+    {% for benchmark in benchmarks %}
+    <div class="accordion benchmark">
+        <div class="accordion-header">
+            <span><!-- empty span, to move the Benchmark name to the middle --></span>
+            {{ benchmark.prettyName }}
+            <div class="tool-menu">
+                <input type="checkbox" class="tool-checkbox pure-checkbox" name="{{ benchmark.filename }}--selected">
+            </div>
+        </div>
+        <div class="accordion-content">
+            <fieldset>
+                <legend>detectTool</legend>
+                <div class="pure-g">
+                    {% for argument in benchmark["detectClonesArguments"] %}
+                    <div class="pure-u-1 pure-u-md-1-2 argument">
+                        <label for="{{ benchmark.filename }}__{{ argument.name }}">{{ argument.name }}</label>
+                        <p>{{ allow_linebreaks(argument.description) }}</p>
+                        <input type="text" id="{{ benchmark.filename }}__{{ argument.name }}"
+                            name="{{ benchmark.filename }}__{{ argument.name }}" value="{{ argument.default }}"
+                            class="pure-u-23-24" >
+                    </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>evaluateTool</legend>
+                <div class="pure-g">
+                    {% for argument in benchmark["evaluateToolArguments"] %}
+                    <div class="pure-u-1 pure-u-md-1-2 argument">
+                        <label for="{{ benchmark.filename }}__{{ argument.name }}">{{ argument.name }}</label>
+                        <p>{{ allow_linebreaks(argument.description) }}</p>
+                        <input type="text" id="{{ benchmark.filename }}__{{ argument.name }}"
+                            name="{{ benchmark.filename }}__{{ argument.name }}" value="{{ argument.default }}"
+                            class="pure-u-23-24" >
+                    </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- END shared benchmarks config for all detector tools -->
+
+    <legend class="tools-legend">Clone detector tools</legend>
+    <!-- one Section/Accordion for each detector tool -->
+    {% for detector in detectorsTemplates %}
+    <div class="accordion">
+        <div class="accordion-header">
+            {{ detector.detectorName }}
+            <div class="tool-menu">
+                <button class="copy-tool" type="button" onclick="copyToolRequest('{{ detector.filename }}')">
+                    <i title="duplicate this detector tool" class="fa-regular fa-copy fa-lg"></i>
+                </button>
+                <input type="checkbox" class="tool-checkbox pure-checkbox" name="{{ detector.filename }}--selected">
+            </div>
+        </div>
+        <div class="accordion-content">
+            <fieldset>
+                <div class="pure-g">
+                    {% for argument in detector["arguments"] %}
+                    <div class="pure-u-1 pure-u-md-1-2 argument">
+                        <label for="{{ detector.filename }}__{{ argument.name }}">{{ argument.name }}</label>
+                        <p>{{ allow_linebreaks(argument.description) }} </p>
+                        <input type="text" id="{{ detector.filename }}__{{ argument.name }}"
+                            name="{{ detector.filename }}__{{ argument.name }}" value="{{ argument.default }}"
+                        class="pure-u-23-24">
+                    </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Benchmark: detectTool</legend>
+                <p>Notice: some benchmarks may not support some of these options</p>
+                <div class="pure-g">
+                {% for argument in detector["bigCloneEvalArguments"] %}
+                <div class="pure-u-1 pure-u-md-1-2 argument">
+                    <label for="{{ detector.filename }}__{{ detector.bigCloneEvalFilename }}__{{ argument.name }}">{{ argument.name }}</label>
+                    <p>{{ allow_linebreaks(argument.description) }}</p>
+                    <input type="text"
+                        id="{{ detector.filename }}__{{ detector.bigCloneEvalFilename }}__{{ argument.name }}"
+                        name="{{ detector.filename }}__{{ detector.bigCloneEvalFilename }}__{{ argument.name }}"
+                        value="{{ argument.default }}" class="pure-u-23-24" required>
+                </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- name of the run -->
+    <fieldset class="pure-g run-name pure-u-1">
+        <div class="pure-u-1 pure-u-md-1-2 centered-block">
+            <label for="runName" class="">Run name:</label>
+            <input type="text"
+                id="runName"
+                name="runName"
+                pattern="[\w\d\.\-_]+" title="only [a-z A-Z 0-9 _ . -] allowed, no whitespaces">
+        </div>
+    </fieldset>
+
+    <div class="pure-g row-buttons">
+        <button class="pure-u-1-2 pure-button pure-button-primary start-run-button" type="submit">
+            <i class="fa-regular fa-circle-play fa-xl" ></i>
+            Start run
+        </button> 
+        <button id="cancel-run" type="button" class="pure-u-1-2 pure-button pure-button-primary cancel-run-button" >
+            <i class="fa-solid fa-ban fa-xl"></i>
+            Cancel run
+        </button>
+    </div>
+</form>
+
+    {# create the messageFromServer variable, if it is undefined #}
+    {% set messageFromServer = none if messageFromServer is not defined else messageFromServer %}
+
+    {{ display_message_from_server(messageFromServer) }}
+
+<script>
+    function displayMessage(message){
+        const messageBox = document.getElementById("message-from-server");
+        const messageText = document.getElementById("message-from-server-text");
+        const successIcon = document.getElementById("message-from-server-success");
+        const errorIcon = document.getElementById("message-from-server-error");
+
+        // Update message text and show message icon (for success or error)
+        messageText.innerText = message.message;
+        messageBox.classList.remove("hidden");
+
+        // Toggle icon visibility based on message type
+        if (message.type === "success") {
+            successIcon.classList.remove("hidden");
+            errorIcon.classList.add("hidden");
+        } else if (message.type === "error") {
+            successIcon.classList.add("hidden");
+            errorIcon.classList.remove("hidden");
+        }
+    }
+
+    const accordions = document.getElementsByClassName('accordion');
+
+    for (const accordion of accordions) {
+        const header = accordion.getElementsByClassName('accordion-header')[0];
+        const content = accordion.getElementsByClassName('accordion-content')[0];
+
+        // expand the accordion when clicking on the accordion header
+        header.addEventListener('click', () => { 
+            // Prevent expanding the accordion when clicking on menu inputs (checkbox, copy)
+            if (!event.target.closest('.tool-menu')) {
+                content.style.display = content.style.display === 'block' ? 'none' : 'block';
+            }
+        });
+    };
+
+    function copyToolRequest(toolName) {
+        var toolNameAppendant = prompt("new name for "+toolName+":", "");
+
+        // don't allow empty strings -> prompt again
+        while(toolNameAppendant === "") {
+            toolNameAppendant = prompt("new name for "+toolName+":", "");
+        }
+
+        if(toolNameAppendant == null){ // prompt was canceled
+            return
+        }
+
+        // send a PUT request with JSON data to the server
+        // server will copy the specified detector tool
+        fetch("{{ url_for('main.copy_detector_tool_config') }}", {
+            method: 'PUT',
+            body: JSON.stringify({ 
+                'toolName': toolName,
+                'newName' : toolNameAppendant,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+                }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        })
+        .then((response) => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                throw new Error(response);
+                console.error("Error:", response.json);
+            }
+        });
+    };
+        
+    document.getElementById("cancel-run").addEventListener("click", function() {
+        fetch("{{ url_for('main.run_abort') }}", {
+            method: "GET",
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            displayMessage(data)
+            
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,2 @@
+# ignore runs in the run directory on image build
+./data/cloneDetection/runs/*

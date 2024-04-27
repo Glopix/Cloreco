@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %} Past runs {% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static',filename='bar-plot.js') }}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script>
+        // get data (list of dicts/json) from webserver and save it
+        // for later use in interactive bar chart
+        var summaryData = {{ summaryData | tojson | safe }};
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="downloads">
+    <h1>Past runs</h1>
+    <!-- file browser -->
+    <!-- "back"/go to parent directory -->
+    {% if request.path != "/downloads/" %}
+        <form class="back-btn">
+            <div class="pure-button">
+            <i class="fa-solid fa-arrow-up" onclick="history.back()"></i>
+        </div>
+        </form>
+    {% endif %}
+    <div class="file-browser">
+        <table class="pure-table">
+            <!-- show current directory path -->
+            <div class="file-browser-header">        
+                {{ request.path|replace("/downloads", "", 1) }}
+            </div>
+            <!-- file browser: header -->
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                    <th>Modified</th>
+                    <th>Size</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- file browser: directories and files -->
+            {# List all files and directories in a directory #}
+            {% for file in files|sort(attribute='name') %}
+                <tr class="pure-button">
+                    <td>
+                        {% if file.is_dir %}
+                            <a href="{{ url_for('main.show_directory', path=file.path) }}">
+                        {% endif %}
+                            {{ file.name }}
+                        </a>
+                    </td>
+                    <td class="download-btn">
+                        <form method="POST" action="/downloads/{{ file.path }}/download">
+                            <button type="submit">
+                                <i class="fa fa-solid fa-download" style="color: #000000;"></i> 
+                                Download
+                            </button>
+                        </form>
+                    </td>
+                    <td class="delete-btn">
+                        <button onclick="deleteFile('/downloads/{{ file.path }}')">
+                            <i class="fa fa-solid fa-trash" style="color: #000000;"></i> 
+                            Delete
+                        </button>
+                    </td>
+                    <td>
+                        {{ file.modified }}
+                    </td>
+                    <td>
+                        {{ file.size | filesizeformat() }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if diagrams %}
+        <h2>Diagrams</h2>
+
+        <!-- interactive bar chart using plotly.js (via bar-plot.js file) -->
+        <div class="diagram">
+            <div id="recallPlot"></div>
+            <div id="cloneTypeSelectors"></div>
+        </div>
+
+        <div id="grid-table" class="diagram" alt="Table of summary data"></div>
+        
+        {% for diagram in diagrams %}
+        <div class="diagram">
+            <img src="/downloads/{{ diagram }}" alt="Diagram">
+        </div>
+        {% endfor %}
+
+    {% endif %}
+</div>
+<script>
+
+    /**
+     * Sends a DELETE request to the specified URL after user confirmation.
+     * @param {string} url - The URL to which the DELETE request is sent.
+    */
+    function deleteFile(url) {
+    // Confirm before proceeding
+    if (!window.confirm('Are you sure you want to delete this file?')) {
+        console.log('Deletion cancelled.');
+        return;
+    }
+
+    // send the DELETE request
+    fetch(url, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('error in response');
+        }
+        return response.text();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        location.reload();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+
+const { Grid } = gridjs;
+
+new Grid({
+  columns: ["Name", "Runtime", "TotalDetectedClones", "Type", "numClones", "numDetected", "recall"],
+  data: summaryData.map(item => [item.Name, item.Runtime, item.TotalDetectedClones, item.Type, item.numClones, item.numDetected, item.recall]),
+  search: true,
+  sort: true,
+  pagination: {
+    limit: 5,
+  },
+  fixedHeader: true
+}).render(document.getElementById("grid-table"));
+
+</script>
+
+{% endblock %}
+

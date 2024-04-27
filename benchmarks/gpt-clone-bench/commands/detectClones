@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+"""
+python version of detectClones from BigCloneEval
+added features:
+    "-d", "--dataset-directory" parameter:
+        Directory in which the benchmark files with clones are stored.
+    "-b", "--benchmark-parts" parameter: 
+        Specify particular segments of the benchmark dataset for the clone detection tool to process, instead of the entire dataset.
+
+Python 3.5+ required
+(for pathlib argument 'exist_ok')
+"""
+
+import argparse
+import os
+import subprocess
+import sys
+import shutil
+import tempfile
+from pathlib import Path
+import random
+import math
+
+# `typing.List` is imported to provide type hints for older Python versions (<= 3.8),
+# ensuring compatibility by explicitly specifying variable types like List[str],
+# which is not natively supported in these versions without the `typing` module.
+from typing import List
+
+def parse_args() -> argparse.Namespace:
+    """
+    Parses command line arguments.
+
+    Returns:
+        command line arguments passed
+    """
+    parser = argparse.ArgumentParser(description="""
+                    Executes the clone detection tool for the benachmark clone files in an automated procedure.
+                    Requires a script that configures and executes the tool, 
+                    and the scalability limits of the tool in terms of the maximum input size measured in source files.
+                    Used deterministic input partitioning to overcome scalability limits. 
+                    Optional, clone detection can be performed manually if desired."""
+                )
+
+    parser.add_argument("-o", "--output", required=True, 
+                        help="Output file for the detection results (csv).")
+    parser.add_argument("-r", "--tool-runner", "--tr", required=True, 
+                        help="Path to the tool runner executable.")
+    parser.add_argument("-m", "--max-files", "--mf", type=int, default=0, required=False, 
+                        help="""Maximum files in each output subset (pair of partitions).
+                            A value of 0 (default) indicates that the dataset will not be partitioned.""")
+    parser.add_argument("-n", "--no-clean", "--nc", action="store_true" , required=False, 
+                        help="""Does not clean up scratch data. For diagnosis/correction. 
+                            See documentation. Need to specify custom scratch directory for this.""")
+    parser.add_argument("-s", "--scratch-directory", "--sd", required=False, default="",
+                        help="""Directory to be used as scratch space. Default is
+                            system tmp directory. Can not already exist.""")
+    parser.add_argument("-d", "--dataset-directory", required=False, 
+                        # default directory in GPTCloneBench benchmark is /cloneDetection/benchmark/input/
+                        default=Path(__file__).absolute().parent.parent / "input",
+                        help="""Directory in which the benchmark files with clones are stored.""")
+    parser.add_argument("-b", "--benchmark-parts", required=False, default="all",
+                        help=("Specify particular segments of the benchmark dataset for the clone detection tool to process, "
+                            "instead of the entire dataset. " 
+                            "Use comma-separated values for discrete parts (e.g., 'part1,part3'),"
+                            "a range for consecutive segments (e.g., 'part1-part7')"
+                            "or the wildcard character '*' for patterns." 
+                            "Defaults to 'all', indicating the whole dataset. "
+                            "Refer to the benchmark documentation for valid segment identifiers."))
+    
+    return parser.parse_args()
+
+class DetectClones:
+    def __init__(self) -> None:
+        args = parse_args()
+        self.maxFiles = args.max_files
+        self.noClean = args.no_clean
+        self.outputFile = Path(args.output)
+        self.toolRunner = Path(args.tool_runner)
+        self.datasetDir = Path(args.dataset_directory)
+        self.scratchDir = args.scratch_directory
+        self.benchmarkParts = args.benchmark_parts
+
+        self.startup_check()
+
+    def startup_check(self) -> None: 
+        if self.scratchDir:
+            self.scratchDir = Path(self.scratchDir)
+            if self.scratchDir.exists():
+                print("Scratch directory already exists. Must specify a new one.", file=sys.stderr)
+                #shutil.rmtree(scratchDir)
+                sys.exit(1)
+            self.fullClean = False
+        else:
+            self.scratchDir = Path(tempfile.mkdtemp(prefix="DetectClones"))
+            self.fullClean = True
+
+        outputFile = self.outputFile
+        if outputFile.exists():
+            # erases the content
+            with outputFile.open('w') as file:
+                pass
+        else: 
+            outputFile.parent.mkdir(parents=True, exist_ok=True)
+            outputFile.touch()
+
+
+    # public Void call() {}
+    def main(self) -> None:
+        """
+        Main execution function for the detection process. It attempts to run detection using specified arguments.
+        If an exception is caught, it prints the error message to stderr,
+        optionally performs a full cleanup by removing the scratch directory, and then exits the program with an error code.
+        The function also performs cleanup if `fullClean` is enabled, regardless of whether an exception occurred.
+        """
+        try:
+            self.detect(self.outputFile, self.datasetDir, self.toolRunner, self.scratchDir, self.maxFiles, not self.noClean)
+        except Exception as e:
+            print(f"An exception occurred during detection: {e}", file=sys.stderr)
+            if self.fullClean and self.scratchDir.exists():
+                shutil.rmtree(self.scratchDir)
+            sys.exit(1)
+
+        if self.fullClean:
+            shutil.rmtree(self.scratchDir)
+
+    # added: execute detection only on specified parts of the benchmark dataset
+    def _parse_benchmark_parts_input(input: str) -> List[str]:
+        """
+        Parse the input string into a list of elements, expanding ranges.
+        Returns:
+            list: expanded ranges of the input '--benchmark-parts' parameter
+        """
+        elements = input.split(',')
+        ret = []
+        for element in elements:
+            element = element.strip()
+            if '-' in element:  # Handle ranges
+                elementRange = element.split('-')
+
+                # ensure all elements of this range are numeric
+                if not all(s.isnumeric() for s in elementRange):
+                    print(f"The specified benchmark-parts range '{element}' is invalid, since it contains non-numeric values. This range is skipped." , file=sys.stderr)
+                    continue
+
+                start, end = map(int, elementRange)
+                # if a range with start > end was entered, e.g.: "5-4"
+                # only the start value will be accepted
+                if start > end :
+                    print(f"The specified benchmark-parts range '{element}' is invalid, since the start is greater than the end. Only the start ({start}) is used." , file=sys.stderr)
+                    ret.append(end)
+
+                ret.extend(i for i in range(start, end + 1))
+            else:
+                ret.append(element.strip())
+
+        return [str(i) for i in ret]
+
+    # added: execute detection only on specified parts of the benchmark dataset
+    def get_benchmark_parts_to_use(self, datasetDir: Path) -> List[str]:
+        """
+        If the '--benchmark-parts' parameter was specified, the detection process is only executed on the specified parts of the benchmark data set.
+        This method returns these parts.
+        Returns:
+            Path: parts of the benchmark data, which will be used for the detection process
+        """
+        
+        # use benchmark parts all if self.benchmarkParts is empty or "all": 
+        parts = self.benchmarkParts.strip()
+        if not parts or parts.lower() == "all":
+            print(f"executing clone detection on all benchmark parts")
+            return [dir for dir in datasetDir.iterdir() if dir.is_dir()]
+
+        input = self._parse_benchmark_parts_input(self.benchmarkParts)
+
+        specified = set()
+        for directory in input:
+            # handle * wildcard patterns
+            if directory.endswith('*'):
+                directory.rstrip('**/*') # prevent recursive patterns
+                directory = datasetDir.glob(directory)
+                directory = [p for p in directory if p.is_dir()]
+                specified.update(directory)
+                pass
+            else:
+                directory = datasetDir / directory
+                if directory.is_dir():
+                    specified.add(directory)
+
+
+        if not specified:
+            print(f"The specified benchmark-parts '{', '.join(input)}' are invalid, since no directories were found that match these parts.", file=sys.stderr)
+            print(f"executing clone detection on all benchmark parts")
+            return [dir for dir in datasetDir.iterdir() if dir.is_dir()]
+
+        dirNames = [dir.name for dir in specified]
+        print(f"executing clone detection on these benchmark parts: {', '.join(dirNames)}")
+        return list(specified)
+
+    
+    # public static void detect(Path output, Path dataset, Path tool, Path scratchdir, int maxFiles, boolean cleanup) throws IOException {
+    def detect(self, output: Path, dataset: Path, tool: Path, scratchdir: Path, maxFiles: int, cleanup: bool):
+        #inputs = [p for p in dataset.iterdir() if p.is_dir()]
+        inputs = self.get_benchmark_parts_to_use(dataset)
+        inputs.sort(reverse=True)
+
+        with output.open("w") as writer:
+            for inputPath in inputs:
+                print(f"Detecting clones in: {inputPath}")
+                if maxFiles and len(list(inputPath.glob("**/*"))) > maxFiles:
+                    # Partition and detect
+                    self.detect_with_partition(tool, inputPath, writer, scratchdir, maxFiles, cleanup)
+                else:
+                    # Direct detection
+                    retval = self.run_detection(tool, inputPath, writer)
+                    if retval != 0:
+                        print(f"Execution for input: {inputPath} had a non-zero return value: {retval}.", file=sys.stderr)
+
+
+    # public static int detect(Path tool, Path input, Writer out) throws IOException, InterruptedException {
+    def run_detection(self, tool: Path, inputPath: Path, writer):
+        if os.name == 'nt':
+            cmd = ["cmd.exe", "/c", f"{tool} {inputPath}"]
+        else:
+            cmd = ["bash", "-c", f'"{tool}" "{inputPath}"']
+               
+        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                line = line.strip()
+                if line:
+                    writer.write(line + "\n")
+            proc.wait()
+            return proc.returncode
+
+
+    # public static void partition(Path dir, Path split, int maxfiles) throws IOException {
+    def partition(self, srcDir: Path, targetDir: Path, maxFilesPerPartition: int):
+
+        # Gather all file paths and shuffle them for random distribution
+        filePaths = [file for file in srcDir.rglob("*") if file.is_file()]
+        random.shuffle(filePaths)
+
+        # Adjust maxFilesPerPartition to account for pairing
+        maxFilesPerPartition = max(math.ceil(maxFilesPerPartition / 2), 1)
+        numPartitions = math.ceil(len(filePaths) / maxFilesPerPartition)
+
+        # Split files into partitions
+        partitions = [filePaths[i * maxFilesPerPartition:(i + 1) * maxFilesPerPartition] for i in range(numPartitions)]
+        
+        def copy_files_to_partition(partitionFiles, partitionDir):
+            """Copies files to the given partition directory, preserving the directory structure."""
+            for file in partitionFiles:
+                relativePath = file.relative_to(srcDir)
+                targetPath = partitionDir / relativePath
+                targetPath.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(file, targetPath)
+
+        # Build each pair of partitions on disk, considering symmetry
+        for i, partitionA in enumerate(partitions):
+            for j in range(i + 1, len(partitions)):
+                partitionB = partitions[j]
+                partitionDir = targetDir / f"{i}-{j}"
+                partitionDir.mkdir(parents=True, exist_ok=True)
+
+                # Copy files from both partitions to the new directory
+                copy_files_to_partition(partitionA, partitionDir)
+                copy_files_to_partition(partitionB, partitionDir)
+
+
+    # public static void detect(Path tool, Path input, Writer out, Path scratchdir, int maxFiles, boolean cleanup) throws IOException {
+    def detect_with_partition(self, tool: Path, inputPath: Path, writer, scratchdir: Path, maxFiles: int, cleanup: bool):
+        tmpdir = scratchdir / f"{inputPath.name}_partition"
+        tmpdir.mkdir(parents=True, exist_ok=True)
+        self.partition(inputPath, tmpdir, maxFiles)
+
+        for part in tmpdir.iterdir():
+            if not part.is_dir(): continue
+            print(f"\tExecuting for partition: {part}")
+            retval = self.run_detection(tool, part, writer)
+            if retval != 0:
+                print(f"Execution for input: {inputPath} partition: {part.name} had non-zero return value.", file=sys.stderr)
+
+        if cleanup:
+            shutil.rmtree(tmpdir)
+
+
+
+if __name__ == "__main__":
+    detect = DetectClones()
+    detect.main()

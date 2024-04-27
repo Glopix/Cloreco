@@ -1,0 +1,19 @@
+[general]
+pretty_name = GPTCloneBench
+
+[container]
+image = ghcr.io/glopix/abcd-images/gpt-clone-bench-benchmark
+benchmark_path = /cloneDetection/benchmark/
+
+[detectClones-defaults]
+benchmark-parts = all
+
+[detectClones-descriptions]
+benchmark-parts = Which parts of the GPTCloneBench clone database will be used <br> Valid values: fsc, tsc_p1_MT3, tsc_p1_T4, tsc_p2_MT3, tsc_p2_T4, "all" (default);    seperate multiple values by ',' '*' pattern allowed <br> e.g.: fsc, tsc_p1_*
+
+[evaluateTool-defaults]
+min-lines = 
+
+[evaluateTool-descriptions]
+min-lines = Minimum clone size in original lines.
+

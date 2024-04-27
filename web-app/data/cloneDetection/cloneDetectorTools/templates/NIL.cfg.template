@@ -1,0 +1,6 @@
+min_line=6
+min_token=50
+n_gram=5
+partition_number=10
+filtration_threshold=10
+verification_threshold=70

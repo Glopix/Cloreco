@@ -1,0 +1,24 @@
+[container]
+image = ghcr.io/glopix/abcd-images/cc-aligner
+mountpoint_base = /cloneDetection/
+mountpoint_detector_config = /cloneDetection/Applications/CCAligner/config.cfg
+mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg
+
+# TODO: name -> benchmark
+[benchmark-argument-descriptions]
+max_files = Maximum amount of files
+logging_verbose = Save stdout and stderr of the detector tool in a log file?
+
+[benchmark-argument-defaults]
+max_files = 100000
+logging_verbose = False
+
+[detector-argument-descriptions]
+window_size_of_token = continuous code fragments
+similarity = similarity threshold
+
+[detector-argument-defaults]
+thread_num = 8
+window_size_of_token = 6
+edit_dist = 1
+similarity = 0.6

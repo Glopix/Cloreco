@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+import argparse
+from pathlib import Path
+"""
+This script simulates the import of a CSV file with clone pairs. 
+Instead of actually importing them, a symbolic link 'clones.csv' is created in the script's parent directory (benchmark directory).
+It points to the the specified CSV file.
+This link will be used by the next command (evaluateTool)
+"""
+
+def parse_args() -> argparse.Namespace:
+        """
+        Parses command line arguments.
+
+        Returns:
+            command line arguments passed
+        """
+        parser = argparse.ArgumentParser(
+            description="""'Import' a CSV file with clone pairs. 
+            Instead of actually importing them, a symbolic link is created from the specified file to script's parent directory (benchmark directory).
+            This link will be used by the next command (evaluateTool)""")
+        
+        parser.add_argument("-c", "--clones", required=True, 
+                            help="(CSV) File containing the detected clones.")
+        parser.add_argument("-t", "--tool", required=False, 
+                            help="The ID of the tool.")
+        
+        # ignore unknown args
+        args, unknown = parser.parse_known_args()
+        return args
+
+def create_symlink(srcFile: str) -> None:
+    """
+    Creates a symbolic link in the script's parent directory (benchmark directory) pointing to the specified CSV clone file.
+
+    Parameters:
+        srcFile (str): The path to the CSV clone file.
+    """
+    # ensure the path is absolute
+    srcPath = Path(srcFile).resolve()
+    # get the directory of the current script's parent directory (benchmark directory)
+    benchmarkDir = Path(__file__).parent.parent
+    # construct the symlink path
+    newLink = benchmarkDir / "clones.csv"  
+
+    # remove leftover link/file, if present
+    try:
+        newLink.unlink()
+    except FileNotFoundError:
+        pass
+    # Create the symbolic link
+    newLink.symlink_to(srcPath)
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    csvCloneFile = args.clones
+    create_symlink(csvCloneFile)

@@ -1,0 +1,11 @@
+
+test-images/reports/*
+test-images/evaluation/*
+old/
+web-app/data/cloneDetection/runs/
+web-app/.env
+benchmarks/**/*.java
+benchmarks/*/*/*/
+benchmarks/*/*.zip
+benchmarks/*/*.tar*
+benchmarks/*/input/ 

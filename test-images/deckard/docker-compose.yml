@@ -1,0 +1,17 @@
+version: '3.10'
+services:
+  deckard:
+    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/deckard
+    container_name: deckard
+    volumes:
+      # mount config file
+      - ./deckard_config.cfg:/cloneDetection/Applications/Deckard/config
+
+      # mount config file of BigCloneEval commands (used by entrypoint.py)
+      - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
+
+      # directory: report from detectClones 
+      - ../reports/:/cloneDetection/reports/
+      # directory: final report from evaluateTool 
+      - ../evaluation/:/cloneDetection/evaluation/
+

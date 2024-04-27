@@ -1,0 +1,30 @@
+version: '3.10'
+services:
+  stone-detector:
+    depends_on:
+      - benchmark
+    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/stone-detector
+    container_name: stone-detector
+    volumes:
+      # mount config file
+      - ./stoneDetector_config.cfg:/cloneDetection/Applications/StoneDetector/config/default.properties 
+
+      # mount config file of BigCloneEval commands (used by entrypoint.py)
+      - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
+
+      # directory: report from detectClones 
+      - ../reports/:/cloneDetection/reports/
+      # directory: final report from evaluateTool 
+      - ../evaluation/:/cloneDetection/evaluation/
+
+      - share:/cloneDetection/benchmark
+
+    entrypoint: /bin/bash -c "sleep 9000000000"
+
+  benchmark:
+    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/gpt-clone-bench-benchmark
+    volumes:
+      - share:/cloneDetection/benchmark
+
+volumes:
+  share:

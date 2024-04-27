@@ -1,0 +1,16 @@
+The standalone version of GPTCloneBench was used
+https://github.com/srlabUsask/GPTCloneBench/blob/2aeeb5e6b82c91e0a0634403688b4e248c80da8f/GPTCloneBench_semantic_standalone_clones.zip,
+This file was commited on the GitHub repo at Nov 22, 2023, 11:59 PM GMT+1
+In this version only standalone clones are given and in standalone folder, every clone pair is given in a seperate file.
+
+The directories have been restructured and renamed to better fit the benchmarking tools.
+Only java files have been retained, all others have been removed.
+
+original directory/file location:                           -> new directory/file location:
+----------------------------------------------------------------------------------------------
+standalone/false_semantic_clones/java/*.java                -> input/fsc/*.java
+standalone/true_semantic_clones/java/prompt_1/MT3/*.java    -> input/tsc_p1_MT3/*.java
+standalone/true_semantic_clones/java/prompt_1/T4/*.java     -> input/tsc_p1_T4/*.java
+standalone/true_semantic_clones/java/prompt_2/MT3/*.java    -> input/tsc_p2_MT3/*.java
+standalone/true_semantic_clones/java/prompt_2/T4/*.java     -> input/tsc_p2_T4/*.java
+

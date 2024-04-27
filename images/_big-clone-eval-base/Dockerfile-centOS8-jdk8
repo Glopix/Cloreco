@@ -1,0 +1,38 @@
+# BigCloneEval base image
+# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval:centOS8-jdk8
+FROM centos:centos8
+
+# CentOS 8 reached the End Of Life (EOL) on December 31st, 2021, thus it no longer receives development resources from the official CentOS project
+# to update CentOS, the mirrors need to be updated to CentOS Vault Mirror, where they will be archived permanently
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*    && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+# install dependencies
+RUN yum install git make java-1.8.0-openjdk-devel python3 -y
+
+WORKDIR /cloneDetection/
+
+RUN git clone https://github.com/jeffsvajlenko/BigCloneEval
+
+# download bigclonebenchdb
+ADD https://r5je2q.dm.files.1drv.com/y4mmgbYfYvpEq1KxOZvhR7Si4bXocKSse0d5iuMf-02tnGD34il8-Fx9KCHPWnRRIWOoYW5-qj8J3ou86ZUgMH_J2a5AYMYX9JrLPOFrW8BCZw5fPQGxq8xnEhHn2dvwWd2ndIhhenhWZCt4ewNkDMzZfhVxVYHLF9yPWmP-t9umjrzty9rcoIQ2NvfCZ1dFCSAVsCSB9CYTEnqZUTe0VoxAw BigCloneBench_BCEvalVersion.tar.gz
+RUN tar -xf BigCloneBench_BCEvalVersion.tar.gz -C /cloneDetection/BigCloneEval/bigclonebenchdb    && \
+    rm BigCloneBench_BCEvalVersion.tar.gz
+
+# download ijadataset
+ADD https://qffqra.dm.files.1drv.com/y4mzcsXh-6hPIevr3IXNuSGhO2_ADTD9j0eRdlDbiJrcDI_2WjR6DvphGJyNecskWdbToMwEq4Pgic6I49VBdidExbqVkhE6kjvej378YOUvxJLDx5fJVHYOl34ZZHV4clx9nOSNu-XYp_Rgk__oxHRZU8lUaTaaFNEqYI7miBymv51JsS4PtcGKhtKB84ujC26filEDJ5Vm4MyUDfS-9rv2Q IJaDataset_BCEvalVersion.tar.gz
+RUN tar -xf IJaDataset_BCEvalVersion.tar.gz -C /cloneDetection/BigCloneEval/ijadataset    && \
+    rm IJaDataset_BCEvalVersion.tar.gz
+
+# install BigCloneEval
+WORKDIR /cloneDetection/BigCloneEval/
+RUN make
+
+# prepare report directory
+RUN mkdir -p /cloneDetection/reports/
+
+
+ADD ./entrypoint.py /cloneDetection/entrypoint.py
+RUN chmod +x /cloneDetection/entrypoint.py
+
+ENTRYPOINT ["/usr/bin/python3", "/cloneDetection/entrypoint.py"]

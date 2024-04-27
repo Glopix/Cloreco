@@ -1,0 +1,547 @@
+
+body {
+    overflow: hidden;
+    background-color: #2f353f;
+    color: #fff;
+}
+
+h1, h2, h3 {
+    text-align: center;
+    color: #ffffffd8;
+}
+
+a:link, a:visited {
+    color: #3b8bba;
+}
+
+a.white-link:link, a.white-link:visited , .pure-menu-link {
+    color: #fff;
+}
+
+.site-container {
+    display: flex;
+}
+
+.not-visible {
+    visibility: hidden;
+}
+.visible {
+    visibility: visible;
+}
+
+.x-large-text{
+    font-size: x-large;
+}
+
+.large-text{
+    font-size: large;
+}
+
+.centered-block {
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    display: block;
+}
+
+.centered {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pure-button {
+    white-space: unset;
+    line-height: unset;
+}
+
+.pure-button-primary {
+    border-radius: 0.3em;
+    min-width: fit-content;
+    font-size: x-large;
+    padding: 1em;
+}
+
+/*
+####################
+ Menu (left sidebar on website)
+####################
+*/
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    background: #191818;
+}
+
+.pure-menu ul {
+    flex: 1;
+    display: flex;
+}
+
+.pure-menu-vertical ul {
+    flex-direction: column;
+}
+
+.pure-menu-horizontal ul {
+    flex-direction: row;
+}
+
+.pure-menu .pure-menu-item{
+    height: unset;
+}
+
+.menu .pure-menu-list li .pure-menu-link:hover,
+        #menu .pure-menu-list li .pure-menu-link:focus {
+            background: #333;
+        }
+
+.imprint-link{
+    margin-top: auto; /* Push the input to the bottom */
+    font-size: smaller;
+}
+
+/*
+#################### 
+ End: Menu
+####################
+*/
+
+/* 
+####################
+ Content area (right side of website)
+ hidden, but working Scrollbar
+####################
+*/
+
+.content {
+    flex: 1;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content {
+    overflow-y: auto;
+
+    /* border-color: #ccc;
+    border-style: dashed; */
+
+    /* hide scrollbar, but keep it working */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.content::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
+
+/*
+#################### 
+ End: Content area
+####################
+*/
+
+/* 
+####################
+ "run" page
+####################
+*/
+
+#message-from-server {
+    font-size: larger;
+    cursor: unset;
+}
+
+/*
+####################
+ top menu (horizontal)
+####################
+*/
+
+.middle-menu {
+    margin-top: -2em;
+    padding: 0.5em;
+    align-self: center;
+    width: fit-content;
+    border-bottom: #43db15;
+    border-bottom-right-radius: 2em;
+    border-bottom-left-radius: 2em;
+}
+
+
+/*
+####################
+ End: top menu (horizontal)
+####################
+*/
+
+/* 
+####################
+ run form Accordion
+####################
+*/
+
+#run-form .accordion {
+    display: block;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#run-form .accordion-header {
+    background-color: #ffffffec;
+    color: black;
+    font-size: larger;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#run-form .benchmark .accordion-header {
+    background-color: #ffebbb ;
+    font-weight: 700;
+}
+
+#run-form .accordion-header .tool-menu { /* display tool-menu items (copy, checkbox) horizontally in a row */
+    display: flex; 
+    align-items: center;
+}
+
+#run-form .accordion-header .tool-menu .copy-tool {
+    margin-right: 0.5em;
+}
+
+#run-form .accordion-header .tool-menu .tool-checkbox {
+    margin-left: 0.5em;
+}
+
+#run-form .accordion-content {
+    display: none;
+    padding: 0.5em;
+}
+
+#run-form .panel {
+    padding: 0 18px;
+    overflow: hidden;
+}
+
+#run-form legend {
+    color: #fff;
+    font-size: 150%;
+}
+
+.argument {
+    margin-bottom: 2em;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.argument input[type="text"]{
+    margin-top: auto; /* Push the input to the bottom */
+}
+
+.argument label {
+    font-size: 130%;
+}
+
+#run-form .row-buttons {
+    margin: 3em;
+}
+
+#run-form .run-name{
+    padding-top: 3em;
+}
+
+#run-form .run-name label{
+    text-align: right;
+    padding-right: 1em;
+    font-size: 130%;
+}
+
+#run-form .run-name label, #run-form .run-name input{
+    display: inline-block;
+}
+
+#run-form .start-run-button {
+    background: rgb(28, 184, 65);
+    width: 10%;
+    margin-right: 1em;
+    margin-left: auto;
+}
+
+#run-form .cancel-run-button {
+    background: rgb(202, 60, 60);
+    width: 10%;
+    margin-right: auto;
+    margin-left: 1em;
+}
+
+#run-form .start-run-button i, .cancel-run-button i {
+    margin-right: 0.5em;
+}
+
+.pure-form input[type="checkbox"]{
+    transform: scale(2);
+    margin-right: 1em;
+}
+
+.pure-form textarea,
+.pure-form input[type="text"]{
+    color: #fff;
+    background-color: #22272e;
+    box-shadow: none;
+}
+
+
+
+/*
+#################### 
+ End: run form Accordion
+####################
+*/
+
+/* 
+####################
+ End: "run" page
+####################
+*/
+
+/* 
+####################
+ "add detector tool" page
+####################
+*/
+
+#add-detector-tool-choice .choice-link {
+    width: 12em;
+    display: block;
+}
+
+.inline-link,
+.inline-link:visited {
+    color: cornflowerblue;
+}
+
+
+.add-tool-notice a {
+    color: rgb(167, 167, 167);
+    display: block;
+    margin-bottom: 1em;
+}
+.add-tool-notice {
+    margin-bottom: 3em;
+}
+
+#add-detector-tool-form h2{
+    margin-top: 5em;
+}
+
+#add-detector-tool-form .new-tool .tool-general label{
+    display: block;
+    text-align: right;
+    padding-right: 2em;
+}
+
+#add-detector-tool-form .new-tool{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#add-detector-tool-form [class^="pure-u-"]{
+    margin-top: 0.5em;
+}
+
+/* reduce input field size a bit */
+#add-detector-tool-form [class*="pure-u-"] textarea,
+#add-detector-tool-form [class*="pure-u-"] input[type="text"]{
+    width: calc(100% - 2em);
+    margin-bottom: 1em;
+}
+
+#add-detector-tool-form [class*="pure-u-"] select{
+    width: max-content;
+}
+
+#add-detector-tool-form [class*="pure-u-"] label {
+    font-size: 130%;
+}
+
+/* 
+####################
+ End: "add detector too" page
+####################
+*/
+
+/* 
+####################
+ "Logs" page
+####################
+*/
+
+#logs-wrapper {
+    border-style: solid;
+    border-color:grey;
+    height: fit-content;
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-anchor: auto !important; /*  See https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-anchor */
+}
+
+#log-terminal {
+    background-color: #000000d8;
+    color: #f1f1f1;
+    padding: 1em;
+}
+
+#log-terminal p {
+    margin: 0;
+    transform: translateZ(0); /* fixes a bug in Safari iOS where the scroller doesn't update */
+}
+
+#nextStep {
+    margin-top: 2em;
+    width: fit-content;
+    align-self: center;
+    background-color: rgb(28, 184, 65);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.progress-wrapper {
+    width: 80%;
+    align-self: center;
+    margin-bottom: 1em;
+}
+
+.progress-wrapper #progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    padding: 0.2em;
+    border-radius: 3px;
+    text-align: center;
+    color: #22272e;
+}
+
+.progress-wrapper #progress-bar #progress-bar-fill {
+    display: block;
+    height: 1.5em;
+    background-color: #43db15;
+    border-radius: 3px;
+    transition: width 500ms ease-in-out;
+}
+
+.progress-wrapper #progress-bar #progress-bar-message{
+    display: block;
+    height: 1.5em;
+    margin-top: -1.5em;
+}
+
+/* 
+####################
+ End: "Logs" page
+####################
+*/
+
+/* 
+####################
+ "Downloads" page
+####################
+*/
+
+.downloads {
+    padding-left: 2em;
+}
+
+.downloads .back-btn {
+    margin-right: 72%; 
+    margin-left: auto; 
+    text-align: center;
+}
+
+.downloads .file-browser {
+    position: relative;
+}
+
+.downloads .file-browser-header {
+    position: absolute;  /* Absolute position within the table */
+      top: -2em;  /* Top edge */
+      left: 50%;  /* Center horizontally */
+      transform: translateX(-50%);  /* Fine-tune centering */
+      z-index: 1;  /* To make sure the div is above the table content */
+}
+
+.downloads p a {
+    display: block;
+    width: 100%;
+    display: inline-block;
+    font-size: large;
+    border: 1px solid #000000;
+    border-radius: 0.3em;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.downloads p a:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.downloads table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.downloads table tr {
+    cursor: unset;
+}
+
+.downloads table thead  {
+    text-align: center;
+}
+
+.downloads table .pure-button {
+    display: table-row;
+    white-space: nowrap;
+}
+
+.downloads table td, .downloads table th {
+    border: none;
+}
+
+.downloads table .download-btn, .downloads table .delete-btn {
+    width: 0;
+    min-width: fit-content;
+}
+
+.downloads .diagram {
+    margin-top: 2em;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.downloads .diagram label{
+    margin-top: 30em;
+    margin-left: 0.2em;
+    margin-right: 1.5em;
+}
+
+.downloads .diagram img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.downloads h1 {
+    margin-bottom: 2em;
+}
+
+.downloads h2 {
+    margin-top: 5em;
+}

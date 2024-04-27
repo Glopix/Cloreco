@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% from "macros.html" import allow_linebreaks, display_message_from_server %}
+
+{% block title %} add clone detector tool {% endblock %}
+
+{% block content %}
+
+<h1>New clone detector tool</h1>
+
+{# create the messageFromServer variable, if it is undefined #}
+{% set messageFromServer = none if messageFromServer is not defined else messageFromServer %}
+
+{{ display_message_from_server(messageFromServer) }}
+
+<form method="POST" action="" class="pure-form pure-g" id="add-detector-tool-form" enctype="multipart/form-data">
+<div class="new-tool pure-u-4-5">
+    {{ form.hidden_tag() }}
+    <p class="add-tool-notice">
+        Please ensure that your Clone Detector tool and {{ via }} meet our requirements:
+        <a href="https://git.uni-jena.de/pi65gop/klondetektoren-automatisierung/-/blob/main/HOWTO_addTool.md">
+            https://git.uni-jena.de/pi65gop/klondetektoren-automatisierung/-/blob/main/HOWTO_addTool.md
+        </a>
+        Non-compliance may lead to failure in the integration process or during the execution of your tool. 
+        Your attention to these guidelines is crucial for a successful integration.
+        <br>
+        If you use the same name as an existing detector tool, this tool will be overwritten.
+    </p>
+    <!-- general information about the clone detector tool -->
+    <fieldset class="pure-g">
+        {% for field in form.tool %}
+            <div class="argument pure-u-1 pure-u-md-1-2">
+                {{ field.label }}
+                <p>{{ allow_linebreaks(field.description) }}</p>
+                {{ field }}           
+            </div>
+        {% endfor %} 
+    </fieldset>
+
+    {% if form.toolArgs %} 
+        <!-- Arguments, descriptions and default values for the new, to be added clone detector tool -->
+        <h2>Arguments</h2>
+        <p>
+            These values are the values for the configuration file of the newly added clone detector tool. 
+            Please add all arguments that are read from the configuration file by your clone detector tool 
+            and are to be changed by the users. <br>
+            If the configuration file contains values other than 
+            simple assignments (e.g.: argument1=foo), please upload a file with all arguments directly 
+            <a href="#" class="inline-link" onclick="document.getElementById('toolArgsFile-upload').classList.remove('hidden')"> 
+                here 
+            </a>. (Nevertheless, you must enter your arguments in the fields below in order to be able to edit them via the website)
+
+            <span id="toolArgsFile-upload" class="hidden">
+                {{ form.toolArgsFile }}
+            </span>
+        </p>
+
+
+        <!-- display the labels only once, to create a table like view with the labels as headers -->
+        <div class="arguments-head pure-g">
+            <div class="pure-u-1-4">
+                {{ form.toolArgs[0].Name.label }}
+                <p>Identifier of your tools arguments</p>
+            </div>
+            <div class="pure-u-1-2">
+                {{ form.toolArgs[0].Description.label }}
+                <p>{{ form.toolArgs[0].Description.description }}
+                </p>
+            </div>
+            <div class="pure-u-1-4">
+                {{ form.toolArgs[0].DefaultValue.label }}
+            </div>
+        </div>
+        <fieldset id="arguments">
+        {% for arg in form.toolArgs %}
+            <div class="pure-g">
+                <div class="pure-u-1-4">
+                    {{ arg.Name }}
+                </div>
+                <div class="pure-u-1-2">
+                    {{ arg.Description }}
+                </div>
+                <div class="pure-u-1-4">
+                    {{ arg.DefaultValue }}
+                </div>
+            </div>
+        {% endfor %} 
+        </fieldset>    
+        <button type="button" id="add-item" class="">Add Argument</button>
+        <button type="button" id="remove-empty-items" class="">Remove empty arguments</button>
+    {% else %}
+    <h3 class="centered-block">
+        Arguments for the newly added clone detector tool can be added in the next step.
+    </h3>
+    {% endif %}
+
+    {% if form.bceArgs %} 
+        <!-- Default values for big clone eval arguments-->
+        <h2>Big Clone Eval Arguments</h2>
+        <p>These values are not intended for the clone detector tool config, but for the Big Clone Eval commands and the execution of the clone detector tool in the container.</p>
+        <fieldset class="pure-g">
+            {% for arg in form.bceArgs %}
+                <div class="argument pure-u-1 pure-u-md-1-2">
+                    {{ arg.argument.label }}
+
+                    <p>{{ arg.argument.description }}</p>
+                    
+                    {{ arg.argument }}
+                    
+                </div>
+            {% endfor %}
+        </fieldset>
+    {% endif %}
+
+    {{ form.submit(class_="centered-block x-large-text pure-button pure-button-primary") }}
+
+    
+</div>
+</form>
+
+<script>
+
+    function increaseInputNumber(inputField) {
+        // increase the ID and name of a input field
+
+        // Increment the number in the id attribute
+        inputField.id = inputField.id.replace(/\d+/, function(n) {
+            return parseInt(n, 10) + 1;
+        });
+
+        // Increment the number in the name attribute
+        inputField.name = inputField.name.replace(/\d+/, function(n) {
+            return parseInt(n, 10) + 1;
+        });
+    }
+
+    function resetInput(inputField) {
+        inputField.value = '';
+    }
+
+    function copyRow(parent) {
+        // copy or row (or child) of a form element
+        // used to append multiple input fields for new arguments
+
+        const newRow = parent.lastElementChild.cloneNode(true);
+        
+        // Find all input elements within this container
+        var inputFields = newRow.querySelectorAll('input, textarea');
+
+        // reset each input element's value and increase it's ID and name
+        inputFields.forEach(function(input) {
+            increaseInputNumber(input);
+            resetInput(input);
+        });
+
+        parent.appendChild(newRow);
+    }
+
+    function removeEmptyRows(parent) {
+        
+        // iterate over each child and looks for required input fields
+        for (const row of parent.children) {
+            var requiredInputs = row.querySelectorAll("input[required]");
+
+            requiredInputs.forEach(function(input) {
+                // if an empty required input is found, the entire field row of this input is removed from the DOM
+                if (input.value.trim() === "") {
+
+                    // prevent deletion of last row
+                    if (parent.childElementCount > 1) {
+                        // Remove the input row
+                        row.remove();
+                    }
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('add-item').addEventListener('click', function() {
+        const itemsContainer = document.getElementById('arguments');
+        copyRow(itemsContainer);
+    });
+    document.getElementById('remove-empty-items').addEventListener('click', function() {
+        const itemsContainer = document.getElementById('arguments');
+        removeEmptyRows(itemsContainer);
+    });
+});
+</script>
+    
+{% endblock %}

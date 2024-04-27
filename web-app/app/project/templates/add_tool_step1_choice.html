@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% from "macros.html" import allow_linebreaks with context %}
+
+{% block title %} add clone detector tool {% endblock %}
+
+{% block content %}
+<div class="pure-g">
+<div class="centered pure-u-4-5">
+    <!-- descriptions -->
+    <h1>Choose a method for integrating your Clone detector Tool</h1>
+    <p>
+        Welcome to our web application’s Clone Detector Tool integration process. 
+        We offer two distinct methods for adding your tool.
+    </p>
+    <p>
+        Upon successful integration using either of these methods, your clone detector tool will become an part of our web application, available for use in the clone detection benchmarking. <br>
+        We invite you to select the method that best aligns with your requirements.
+    </p>
+<div id="add-detector-tool-choice" class="pure-g">
+    <div class="pure-u-11-24">
+        <h2>Integration via Docker Image</h2>
+        <p>
+            Designed for users who have already containerized their clone detector tool into a Docker image. 
+            It is the ideal choice for those familiar with Docker technology and who have their tool ready in a Docker format. 
+        </p>
+        <p>
+            You will be prompted to provide the necessary Docker image details for direct integration into our web application.
+        </p>  
+        <br>
+        <br>
+        <p class="add-tool-notice">
+            <b>Important:</b><br>
+            Please ensure that your Clone Detector tool and Docker image meet our requirements:
+            <a href="https://git.uni-jena.de/pi65gop/klondetektoren-automatisierung/-/blob/main/HOWTO_addTool.md">
+                https://git.uni-jena.de/pi65gop/klondetektoren-automatisierung/-/blob/main/HOWTO_addTool.md
+            </a>
+            Non-compliance may lead to failure in the integration process or during the execution of your tool. 
+            Your attention to these guidelines is crucial for a successful integration.
+        </p>
+    </div>
+    <div class="pure-u-2-24">
+    </div>
+    <div class="pure-u-11-24">
+        <h2>Integration via Git Repository</h2>
+        <p>
+            Aimed at users who may not be versed in Docker or prefer to avoid the containerization process, this method allows for the addition of your tool through a Git repository URL. 
+        </p><p>
+            Our system will take care of the Docker image creation from your provided repository.
+        </p>
+        <br>
+        <br>
+        <p class="add-tool-notice">
+            <b>Important:</b><br>
+            Please ensure that your Clone Detector tool and Git repository meet our requirements:
+            <a class="link" href="https://git.uni-jena.de/pi65gop/klondetektoren-automatisierung/-/blob/main/HOWTO_addTool.md">
+                https://git.uni-jena.de/pi65gop/klondetektoren-automatisierung/-/blob/main/HOWTO_addTool.md
+            </a>
+            Non-compliance may lead to failure in the integration process or during the execution of your tool. 
+            Your attention to these guidelines is crucial for a successful integration.
+        </p>
+    </div>
+    <!-- buttons/links -->
+    <div class="pure-u-11-24">
+        <a class="pure-button pure-button-primary centered choice-link white-link" href="{{ url_for('main.add_detector_tool_via', via='image') }}">
+            Image
+        </a>
+    </div>
+    <div class="pure-u-2-24">
+    </div>
+    <div class="pure-u-11-24">
+        <a class="pure-button pure-button-primary centered choice-link white-link" href="{{ url_for('main.add_detector_tool_via', via='repo') }}">
+            Git Repository
+        </a>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

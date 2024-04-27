@@ -1,0 +1,7 @@
+# CC Aligner config
+
+thread_num=8
+
+window_size_of_token=6
+edit_dist=1
+similarity=0.6

@@ -1,0 +1,18 @@
+version: '3.10'
+services:
+  oreo:
+    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/oreo
+    container_name: oreo
+    volumes:
+      # mount config file
+      - ./oreo_sourcerer-cc.properties:/cloneDetection/Applications/Oreo/clone-detector/sourcerer-cc.properties
+
+      # mount config file of BigCloneEval commands (used by entrypoint.py)
+      - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
+
+      # directory: report from detectClones 
+      - ../reports/:/cloneDetection/reports/
+      # directory: final report from evaluateTool 
+      - ../evaluation/:/cloneDetection/evaluation/
+
+    #entrypoint: bash -c "sleep 6000000000000"

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %} Logs of {{ request.path.split('/')[-1] }} {% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ansi_colors.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        // global variables for the channels
+        var logsChannel = "{{ logsChannel }}";
+        var progressChannel = "{{ progressChannel }}";
+        var heartbeatsChannel = "{{ heartbeatsChannel }}";
+        
+        // initial container execution progress at the time when this page is accessed
+        var initialProgress = '{{ containerProgress | tojson | safe }}';
+    </script>
+    <script src="{{ url_for('static', filename='show-logs.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="progress-wrapper">
+    <div id="progress-bar">
+        <span id="progress-bar-fill" style="width: 0%;"></span>
+        <span id="progress-bar-message">Currently no container is being executed</span>
+    </div>
+</div>
+<div id="logs-wrapper">
+    <div id="log-terminal">
+        {# all log entries of the latest run or image build until now (at the time this page was accessed) #}
+        {% for line in logHistory %}
+        <p>
+            {{ line | safe }}
+        </p>
+        {% endfor %}
+    </div>
+</div>
+<!-- 
+    This button is used only if this is an image build process. It will not show up and will not be used if this is a run 
+    This button will be clickable if the image build process was finished.
+    It leads to the next step, in  which the newly builded image can be added to this web app.
+-->
+<button id="nextStep" name="nextStep" type="submit" value="" data-action="{{ url_for('main.add_detector_tool_via', via='image') }}"
+class="pure-button pure-button-primary pure-button-disabled hidden x-large-text">
+    Next <i class="fa-solid fa-arrow-right fa-xl"></i>
+</button>
+
+{% endblock %}

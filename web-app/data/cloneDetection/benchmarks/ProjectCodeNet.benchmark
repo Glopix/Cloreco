@@ -1,0 +1,19 @@
+[general]
+pretty_name = Project CodeNet
+
+[container]
+image = ghcr.io/glopix/abcd-images/project-codenet-benchmark:latest
+benchmark_path = /cloneDetection/benchmark/
+
+[detectClones-defaults]
+benchmark-parts = all
+
+[detectClones-descriptions]
+benchmark-parts = Which parts of Project CodeNet's database will be used. <br> Valid values: 0, 1, 2, 3, 4, "all" (default);  seperate multiple values by ',' '*' pattern allowed <br> e.g.: 2022r1a, 2022r*
+
+[evaluateTool-defaults]
+min-lines = 
+
+[evaluateTool-descriptions]
+min-lines = Minimum clone size in original lines.
+

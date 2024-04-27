@@ -1,0 +1,41 @@
+services:
+  redis:
+    image: redis
+    restart: unless-stopped
+
+  web:
+    image: ghcr.io/glopix/abcd/abcd-frontend
+    restart: unless-stopped
+    depends_on:
+      - redis
+    volumes:
+    # data directory
+      - ./data/:/app/data/
+    ports:
+      - 5000:5000
+
+  celery:
+    image: ghcr.io/glopix/abcd/abcd-backend
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      # run pull for all images of clone detector tools and benchmarks at startup? (default: true)
+      UPDATE_IMAGES_ON_STARTUP: True
+
+      # push new images ( created via 'add new Tool' web page) to the container registry?
+      PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY: False
+    env_file:
+      # container registry credentials
+      - .env
+    volumes:
+    # data directory
+      - ./data/:/app/data/
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    # give celery more time to abort the running task and remove the running containers at shutdown
+    stop_grace_period: 30s
+
+
+volumes:
+  cloneDetection-data:

@@ -1,0 +1,30 @@
+[container]
+image = ghcr.io/glopix/abcd-images/nil:latest
+mountpoint_base = /cloneDetection/
+mountpoint_detector_config = /cloneDetection/Applications/nil/NIL.config
+mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg
+
+[benchmark-argument-descriptions]
+max_files = Maximum amount of files
+logging_verbose = Save stdout and stderr of the detector tool in a log file? (true or false)
+
+[benchmark-argument-defaults]
+max_files = 100000
+logging_verbose = False
+
+[detector-argument-descriptions]
+min_line = Minimum number of lines that a code fragment must be to be treated as a clone.
+min_token = Minimum number of tokens that a code fragment must be to be treated as a clone.
+n_gram = N for N-gram.
+partition_number = The number of partitions.
+filtration_threshold = Threshold used in the filtration phase (%).
+verification_threshold = Threshold used in the verificatioin phase (%).
+
+[detector-argument-defaults]
+min_line = 6
+min_token = 50
+n_gram = 5
+partition_number = 10
+filtration_threshold = 10
+verification_threshold = 70
+

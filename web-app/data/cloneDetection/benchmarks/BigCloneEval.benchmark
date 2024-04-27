@@ -1,0 +1,39 @@
+[general]
+pretty_name = Big Clone Eval
+
+[container]
+image = ghcr.io/glopix/abcd-images/big-clone-eval-benchmark
+benchmark_path = /cloneDetection/BigCloneEval/
+
+[detectClones-defaults]
+benchmark-parts = all
+
+[detectClones-descriptions]
+benchmark-parts = Which parts of the BigCloneBench (IJaDataset) clone database will be used <br> Valid values: 1-45, "all" (default);   seperate multiple values by ',',   ranges by '-' <br> e.g.:  1, 2, 6-11
+
+[evaluateTool-defaults]
+minimum-judges = 
+matcher = CoverageMatcher 0.7
+max-lines = 
+max-pretty =
+max-tokens = 
+minimum-confidence = 
+min-lines = 
+min-pretty =
+min-tokens = 
+minimum-similarity =
+similarity-type = BOTH
+
+[evaluateTool-descriptions]
+minimum-judges = Minimum number of judges.
+matcher = Specify the clone matcher. See documentation for configuration strings. Default is coverage-matcher with 70% coverage threshold.
+max-lines = Maximum clone size in original lines.
+max-pretty = Maximum clone size in pretty-printed lines.
+max-tokens = Maximum clone size in tokens.
+minimum-confidence = Minimum confidence.
+min-lines = Minimum clone size in original lines.
+min-pretty = Minimum clone size in pretty-printed lines.
+min-tokens = Minimum clone size in tokens.
+minimum-similarity = Minimum clone similarity to evaluate down to.
+similarity-type = How to measure similarity. One of TOKEN, LINE, BOTH, AVG. Defaults to BOTH
+

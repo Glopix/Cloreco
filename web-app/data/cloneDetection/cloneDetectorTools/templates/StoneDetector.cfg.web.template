@@ -1,0 +1,41 @@
+[container]
+image = ghcr.io/glopix/abcd-images/stone-detector
+mountpoint_base = /cloneDetection/
+mountpoint_detector_config = /cloneDetection/Applications/StoneDetector/config/default.properties 
+mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg
+
+[benchmark-argument-descriptions]
+max_files = Maximum amount of files
+logging_verbose = Save stdout and stderr of the detector tool in a log file?
+
+[benchmark-argument-defaults]
+max_files = 100000
+logging_verbose = False
+
+[detector-argument-descriptions]
+THREADSIZE = Number of parallel threads which are used for code clone detection (default: 3)
+MINFUNCTIONSIZE = Minimal length of code lines for a code fragment to be considered
+THRESHOLD = The threshold value used for comparing description sets (max difference)
+SPLITTING = Whether or not split nodes are used in description sets (detection of subclones/blocks)
+METRIC = Metric which is used to compare description sets (LCS, Levenshtein, etc.)
+USEHASH = Whether or not description sets are additionally encoded as hash values
+USEMD5 = Switch between MD5 or 4-byte prime number hash encoding for description sets
+USEFUNCTIONNAMES = Whether or not method names are kept in description sets or normalized
+UPPERFACTOR = Factor that indicates up to which difference in the number of paths of path sets they are compared with each other.
+BYTECODEBASEDCLONEDETECTION = Whether or not to perform clone detection within jar or class files.
+REGISTERCODE_STACKCODE = If true, bytecode-based clone detection is performed using register code, otherwise using stack code
+
+[detector-argument-defaults]
+THREADSIZE=3
+METRIC=LCS
+SPLITTING=false
+USEHASH=true
+USEMD5=false
+THRESHOLD=0.3f
+MINFUNCTIONSIZE=15
+USEFUNCTIONNAMES=true
+UPPERFACTOR=1.7f
+OUTPUT=true
+BYTECODEBASEDCLONEDETECTION=false
+REGISTERCODE_STACKCODE=true
+STUBBERPROCESSING=false

@@ -1,0 +1,18 @@
+version: '3.10'
+services:
+  nicad:
+    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/nicad
+    container_name: nicad
+    volumes:
+      # mount config file of clone detection tool
+      - ./niCad_config.cfg:/cloneDetection/Applications/NiCad/config/myconfig.cfg
+
+      # mount config file of BigCloneEval commands (used by entrypoint.py)
+      - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
+
+      # directory: report from detectClones 
+      - ../reports/:/cloneDetection/reports/
+      # directory: final report from evaluateTool 
+      - ../evaluation/:/cloneDetection/evaluation/
+    
+    #entrypoint: /bin/bash -c "sleep 30000"

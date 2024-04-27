@@ -1,0 +1,26 @@
+{# By default, jinja2 excapes all HTML code coming from variables #}
+{# this macro processes strings containing HTML-like line breaks (represented by <br>) #}
+{# by replacing <br> tags in the string with actual, not-escaped line breaks, ensuring proper rendering. #}
+{% macro allow_linebreaks( string ) -%}
+    {% if string %}
+        {% set lines = string.split('<br>') %}
+        {{ lines[0] }}
+        {% set lines = lines[1:] %}
+        {% for line in lines %}
+            <br>
+            {{ line }}
+        {% endfor %}
+    {% else %}
+        {{ string }}
+    {% endif %}
+{%- endmacro %}
+
+
+{% macro display_message_from_server(messageFromServer) %}
+    <p id="message-from-server" class="centered-block pure-button {{ 'hidden' if messageFromServer is none }}"   >
+        <i id="message-from-server-error" class="fa-solid fa-triangle-exclamation fa-xl {{ 'hidden' if messageFromServer['type'] != 'error' }}" style="color: #ff8040;"></i>
+        <i id="message-from-server-success" class="fa-solid fa-circle-check fa-xl {{ 'hidden' if messageFromServer['type'] != 'success' }}" style="color: #1ed628;"></i>
+        <span id="message-from-server-text">{{ messageFromServer.message | safe }}</span>
+    </p>
+{% endmacro %}
+
