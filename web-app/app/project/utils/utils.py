@@ -143,8 +143,8 @@ def read_template_files(dir: str = "") -> list[dict]:
                     "default": "2342",
                 },
             ],
-            "bigCloneEvalFilename" : "entrypoint.cfg",
-            "bigCloneEvalArguments": 
+            "benchmarkCfgFilename" : "entrypoint.cfg",
+            "benchmarkArguments": 
             [
                 {
                     "name": "max_files",
@@ -168,8 +168,8 @@ def read_template_files(dir: str = "") -> list[dict]:
                 {"name": "var12", "description": "Description of variable2", "default": "420"},
                 {"name": "var33", "description": "Description of variable3", "default": ""},
             ],
-            "bigCloneEvalFilename" : "entrypoint.cfg",
-            "bigCloneEvalArguments": 
+            "benchmarkCfgFilename" : "entrypoint.cfg",
+            "benchmarkArguments": 
             [
                 {
                     "name": "max_files",
@@ -198,8 +198,8 @@ def read_template_files(dir: str = "") -> list[dict]:
                 'detectorName'         : detectorName,
                 'container'            : config['container'],
                 'arguments'            : config['arguments'],
-                'bigCloneEvalFilename' : settings.benchmarks['configFileName'],
-                'bigCloneEvalArguments': config['bigCloneEvalArguments']
+                'benchmarkCfgFilename' : settings.benchmarks['configFileName'],
+                'benchmarkArguments'   : config['benchmarkArguments']
             }
         )
     
@@ -273,7 +273,7 @@ def read_template_file(file: str) -> dict[dict]:
             {"name": "var2", "description": "Description of variable2", "default": "dfs"},
             {"name": "var3", "description": "Description of variable3", "default": "2342"},
         ],
-        "bigCloneEvalArguments": [
+        "benchmarkArguments": [
             {
                 "name": "max_files",
                 "description": "Maximum amount of files",
@@ -290,9 +290,9 @@ def read_template_file(file: str) -> dict[dict]:
     benchmarkDescriptionSection   = settings.templateFiles['benchmarkDescriptionSection']
     benchmarkDefaultValueSection  = settings.templateFiles['benchmarkDefaultValueSection']
     
-    container           = dict(configFile[containerSection])
-    arguments           = read_description_and_defaults(configFile, descriptionSection, defaultValueSection)
-    bigCloneEvalconfig  = read_description_and_defaults(configFile, benchmarkDescriptionSection, benchmarkDefaultValueSection)
+    container        = dict(configFile[containerSection])
+    arguments        = read_description_and_defaults(configFile, descriptionSection, defaultValueSection)
+    benchmarkConfig  = read_description_and_defaults(configFile, benchmarkDescriptionSection, benchmarkDefaultValueSection)
 
     # ensure no value is empty in the container section
     if any(not str(value).strip() for value in container.values()):
@@ -301,7 +301,7 @@ def read_template_file(file: str) -> dict[dict]:
     config = {
         'container' : container,
         'arguments' : arguments,
-        'bigCloneEvalArguments': bigCloneEvalconfig
+        'benchmarkArguments': benchmarkConfig
     }
     
     return config

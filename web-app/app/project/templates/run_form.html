@@ -99,13 +99,13 @@
                 <legend>Benchmark: detectTool</legend>
                 <p>Notice: some benchmarks may not support some of these options</p>
                 <div class="pure-g">
-                {% for argument in detector["bigCloneEvalArguments"] %}
+                {% for argument in detector["benchmarkArguments"] %}
                 <div class="pure-u-1 pure-u-md-1-2 argument">
-                    <label for="{{ detector.filename }}__{{ detector.bigCloneEvalFilename }}__{{ argument.name }}">{{ argument.name }}</label>
+                    <label for="{{ detector.filename }}__{{ detector.benchmarkCfgFilename }}__{{ argument.name }}">{{ argument.name }}</label>
                     <p>{{ allow_linebreaks(argument.description) }}</p>
                     <input type="text"
-                        id="{{ detector.filename }}__{{ detector.bigCloneEvalFilename }}__{{ argument.name }}"
-                        name="{{ detector.filename }}__{{ detector.bigCloneEvalFilename }}__{{ argument.name }}"
+                        id="{{ detector.filename }}__{{ detector.benchmarkCfgFilename }}__{{ argument.name }}"
+                        name="{{ detector.filename }}__{{ detector.benchmarkCfgFilename }}__{{ argument.name }}"
                         value="{{ argument.default }}" class="pure-u-23-24" required>
                 </div>
                 {% endfor %}

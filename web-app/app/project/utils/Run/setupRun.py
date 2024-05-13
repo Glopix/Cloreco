@@ -97,7 +97,7 @@ class SetupRun():
 
     def assamble_benchmarks(self) -> list[dict]:
         """
-        Extract names, pretty names and container configuration of each benchmark which will be used for this run.
+        Extract names, pretty names and container configuration of each benchmark, which will be used for this run.
 
         Returns:
             list of dicts,
@@ -170,7 +170,7 @@ class SetupRun():
             containerConfigs.append( 
                 {
                 'detector_config_filename'  : template['filename'],
-                'entrypoint_config_filename': template['bigCloneEvalFilename'],
+                'entrypoint_config_filename': template['benchmarkCfgFilename'],
                 'container'                 : template['container'],
                 }
             )
@@ -200,7 +200,7 @@ class SetupRun():
                 self.form_data_to_file(detector, detectorFolder)
 
 
-    def get_form_data(self, filename: str, arguments: dict, detectorBCEsettings=False) -> dict:
+    def get_form_data(self, filename: str, arguments: dict, detectorBenchmarkSettings=False) -> dict:
         """
         Retrieve detector tool config data from the website form and return this data as a dict.
         If the detector tool specific BigCloneEval (detectTools) config (set on the website per detector tool) should be retrieved,
@@ -213,7 +213,7 @@ class SetupRun():
             'argument3': 'NTG',
             }
         """
-        if detectorBCEsettings:
+        if detectorBenchmarkSettings:
             formValuePrefix = f"{filename}__{settings.benchmarks['configFileName']}"
         else:
             formValuePrefix = f"{filename}"
@@ -239,7 +239,7 @@ class SetupRun():
         Step 1:
             copy template config files, so all arguments will be initialized with default values
         Step 2:
-            get data from website form and override changed arguments in the previously copied files
+            get data from website form and override arguments in the previously copied files
         """
         detectorName = detector['detectorName']
         filename = detector['filename']
@@ -249,19 +249,19 @@ class SetupRun():
         dstFile = directory / f"{detectorName}{settings.templateFiles['fileExtensionFinal']}"
         copy2(srcFile, dstFile)
 
-        # copy BicCloneEval config file (entrypoint.cfg) from <run>/<benchmark>/ dir to detector dir
+        # copy benchmakr config file (entrypoint.cfg) from <run>/<benchmark>/ dir to detector dir
         srcFile = directory.parent / settings.benchmarks['configFileName']
         dstFile = directory / settings.benchmarks['configFileName']
         copy2(srcFile, dstFile)
 
-        ####### Step 2: get data from website form and override changed arguments in the previously copied files
+        ####### Step 2: get data from website form and override arguments in the previously copied files
         # get config for detector tool
         config = self.get_form_data(filename, arguments=detector['arguments'])
         # write detector tool config to detector config file
         sc.update_shell_config_file(file=f"{directory}/{detectorName}{settings.templateFiles['fileExtensionFinal']}", config=config)
 
         # get detector tool specific benchmark config (entrypoint.cfg)
-        config = self.get_form_data(filename, arguments=detector['bigCloneEvalArguments'], detectorBCEsettings=True)
+        config = self.get_form_data(filename, arguments=detector['benchmarkArguments'], detectorBenchmarkSettings=True)
         # write detector tool specific benchmark config to benchmark config file (default: entrypoint.cfg)
         cp.update_config(dstFile, section=settings.benchmarks['detectClonesSection'], config=config)
 
@@ -281,14 +281,14 @@ class SetupRun():
             templateFile = benchmark["filepath"]
             dstFile = runBenchmarkDir / settings.benchmarks["configFileName"]
 
-            # copy default values from BCE template file into new entrypoint.cfg config file (evaluateTool arguments) in the run dir 
+            # copy default values from benchmark template file into new entrypoint.cfg config file (evaluateTool arguments) in the run dir 
             cp.copy_config_section(templateFile, dstFile, srcSection=evaluateToolDefaults, dstSection=evaluateToolSection)
 
             # config for detector tool
             config = self.get_form_data(filename, arguments=benchmark['evaluateToolArguments'])
             cp.update_config(dstFile, evaluateToolSection, config)
 
-            # copy default values from BCE template file into new entrypoint.cfg config file (detectTools arguments) in the run dir 
+            # copy default values from benchmark template file into new entrypoint.cfg config file (detectTools arguments) in the run dir 
             cp.copy_config_section(templateFile, dstFile, srcSection=detectClonesDefaults, dstSection=detectClonesSection)
 
             # config for detector tool
