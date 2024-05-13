@@ -1,5 +1,5 @@
 """
-these functions used by the "Run" page of the website
+these functions are used by the "Run" page of the website
 and the associated routes in the views.py file
 """
 from shutil import copy2

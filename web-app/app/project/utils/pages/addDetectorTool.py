@@ -1,3 +1,7 @@
+"""
+these functions are used by the "add new tool" pages of the website
+and the associated routes in the views.py file
+"""
 from flask import url_for
 from pathlib import Path
 from shutil import copy2

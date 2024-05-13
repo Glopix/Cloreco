@@ -1,3 +1,7 @@
+"""
+these functions are used by the "Logs" page(s) of the website
+and the associated routes in the views.py file
+"""
 import project.settings as settings
 from flask import url_for
 from pathlib import Path

@@ -1,5 +1,9 @@
+"""
+these functions are used by the "Downloads" page of the website
+and the associated routes in the views.py file
+"""
 import project.settings as settings
-from flask import send_file, send_from_directory, redirect, request, jsonify
+from flask import send_file, send_from_directory
 from pathlib import Path
 import os
 from datetime import datetime
