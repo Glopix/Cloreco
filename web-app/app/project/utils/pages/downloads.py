@@ -9,7 +9,24 @@ from io import BytesIO
 import pandas as pd
 from project.utils.configure import configure_redis
 
-def list_directory_content(directory):
+def input_path_is_valid(path: str|Path) -> bool:
+    """
+    Safety check: make sure the destination path is a child path of the base (downloads) directory
+    to ensure no files outside of the downloads directory can be leaked
+
+    Returns: bool
+    """
+    baseDir = Path(settings.directories["runs"])
+
+    path = Path(path)
+    path = path.resolve()
+
+    if path.is_relative_to(baseDir) and path.exists():
+        return True
+    else:
+        return False
+
+def list_directory_content(directory: str):
     """
     Returns:
      a list of all files and 
@@ -31,7 +48,7 @@ def list_directory_content(directory):
 
     # safety check: make sure the destination directory is a child directory of the base (downloads) directory
     # to ensure no files outside of the downloads directory can be leaked
-    if not directoryPath.is_relative_to(baseDir):
+    if not input_path_is_valid(directoryPath):
         return None
 
     # list of diagram files, to be displayed in the web file browser
@@ -78,8 +95,7 @@ def list_directory_content(directory):
 
     return files, diagrams, summary
 
-
-def get_csv_data(csv):
+def get_csv_data(csv: Path):
     """
     Returns:
      a list of dicts, containing the data of the specified csv file.
@@ -100,9 +116,8 @@ def get_csv_data(csv):
     {'Name': 'StoneDetector', 'Runtime': 13.24, 'Type': Type-2 (blind), 'numDetected': 242}]
     """
 
-
 # Helper function to calculate directory size
-def get_path_size(path):
+def get_path_size(path: Path):
     """
     Calculate the size (in Bytes) of a directory.
     """
@@ -116,8 +131,7 @@ def get_path_size(path):
 
     return size
 
-
-def serve_file(filePath):
+def serve_file(filePath: str):
     """
     Serve a file as download.
     """
@@ -127,7 +141,7 @@ def serve_file(filePath):
 
     # safety check: make sure the destination file is a child of the base (downloads) directory
     # to ensure no files outside of the downloads directory can be leaked
-    if not filePath.is_relative_to(baseDir):
+    if not input_path_is_valid(filePath):
         return None
     
     fileDir = filePath.parent
@@ -135,7 +149,7 @@ def serve_file(filePath):
     
     return send_from_directory(fileDir, file)
 
-def path_download(path):
+def path_download(path: str):
     """
     Serve a path (file or directory) as download.
     If a directory is requested, the directory will be zipped as a in memory zip file.
@@ -143,6 +157,9 @@ def path_download(path):
     baseDir = Path(settings.directories["runs"])
     path = baseDir / path
     fileName = path.name
+
+    if not input_path_is_valid(path):
+        return None
 
     if not path.exists():
         return "Directory not found", 404
@@ -170,7 +187,7 @@ def path_download(path):
         )
     
 
-def path_delete(path):
+def path_delete(path: str):
     """
     Delete a path (directory or file)
     """
@@ -186,6 +203,9 @@ def path_delete(path):
 
     if not path.exists():
         return "File not found", 404
+    
+    if not input_path_is_valid(path):
+        return "invalid Path", 403
 
     # dont delete the directory if this is the directory of the current executed run
     if path.is_relative_to(currentRunDir) and runIsRunning == "True" and runStatus!="failed":
