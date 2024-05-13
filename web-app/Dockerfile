@@ -24,4 +24,5 @@ ENTRYPOINT [ "gunicorn", "run:app", "--worker-class", "gevent", "--bind", "0.0.0
 
 # backend image, used to run celery and start the docker containers
 FROM base as backend
+ENV CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP=True
 ENTRYPOINT [ "celery", "-A", "run.celery", "worker", "--loglevel=info" ]

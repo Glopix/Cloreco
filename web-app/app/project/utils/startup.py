@@ -113,11 +113,33 @@ def on_celeryd_startup(sender=None, instance=None, **kwargs):
     Execute checks on startup of celery
     """
     try:
+        set_startup_status("The Celery (backend service) container is still starting. Please wait and watch the 'docker compose' output. Reload this page to update this message.", "info")
         check_container_registry_login()
         check_images()
     except Exception as exc:
+        set_startup_status(f"""There were errors during the start of the Celery (backend service) container. <br> 
+                           Please check the output of 'docker compose'! <br> 
+                           Error message: <br>
+                           {exc}""", 
+                           "error")
         print(exc)
         sys.exit(1)
+    else:
+        set_startup_status("Startup successful! Runs can now be started.", "success")
+        print("Startup successful! Runs can now be started.")
+
+
+def set_startup_status(statusMsg: str, statusType: str) -> None:
+    """
+    Set a start status with message and type (e.g. error, success). 
+    This status is displayed on the "Home" page, to indicates errors during startup.
+    """
+    redis = configure_redis()
+    status = {
+        "message"   : statusMsg,
+        "type"      : statusType
+    }
+    redis.hset('startup_status', mapping=status)
 
 
 def check_container_registry_login() -> None:

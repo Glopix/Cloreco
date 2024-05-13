@@ -18,8 +18,9 @@
 
 {% macro display_message_from_server(messageFromServer) %}
     <p id="message-from-server" class="centered-block pure-button {{ 'hidden' if messageFromServer is none }}"   >
-        <i id="message-from-server-error" class="fa-solid fa-triangle-exclamation fa-xl {{ 'hidden' if messageFromServer['type'] != 'error' }}" style="color: #ff8040;"></i>
+        <i id="message-from-server-error" class="fa-solid fa-triangle-exclamation fa-xl {{ 'hidden' if messageFromServer['type'] != 'error' }}" style="color: #fd6e36;"></i>
         <i id="message-from-server-success" class="fa-solid fa-circle-check fa-xl {{ 'hidden' if messageFromServer['type'] != 'success' }}" style="color: #1ed628;"></i>
+        <i id="message-from-server-success" class="fa-solid fa-circle-info fa-xl {{ 'hidden' if messageFromServer['type'] != 'info' }}" style="color: #ffd240;"></i>
         <span id="message-from-server-text">{{ messageFromServer.message | safe }}</span>
     </p>
 {% endmacro %}

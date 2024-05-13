@@ -3,6 +3,7 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
+{% from "macros.html" import display_message_from_server %}
 <h1>
     Automatic Benchmarking of Clone Detectors (ABCD)
 </h1>
@@ -37,5 +38,9 @@
 <p class="large-text">
     Wiki: <a href="https://github.com/Glopix/abcd/wiki">https://github.com/Glopix/abcd/wiki</a>
 </p>
+
+{# create the messageFromServer variable, if it is undefined #}
+{% set messageFromServer = none if messageFromServer is not defined else messageFromServer %}
+{{ display_message_from_server(messageFromServer) }}
 
 {% endblock %}

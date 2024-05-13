@@ -4,6 +4,7 @@ import project.utils.utils as Utils
 import project.utils.pages.downloads as Downloads
 import project.utils.pages.run as Run
 import project.utils.pages.logs as Logs
+import project.utils.pages.home as Home
 import project.forms as Forms
 import project.utils.pages.addDetectorTool as AddDetectorTool
 
@@ -12,7 +13,8 @@ main = Blueprint('main', __name__)
 @main.route('/', methods=['GET', 'POST'])
 def index():
     #return redirect("/run")
-    return render_template('home.html')
+    messageFromServer = Home.get_startup_status()
+    return render_template('home.html', messageFromServer=messageFromServer)
 
 ############
 # "Run" page

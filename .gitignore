@@ -9,3 +9,4 @@ benchmarks/*/*/*/
 benchmarks/*/*.zip
 benchmarks/*/*.tar*
 benchmarks/*/input/ 
+**/__pycache__
