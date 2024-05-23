@@ -9,7 +9,7 @@ benchmark_path = /cloneDetection/benchmark/
 benchmark-parts = all
 
 [detectClones-descriptions]
-benchmark-parts = Which parts of Project CodeNet's database will be used. <br> Valid values: 0, 1, 2, 3, 4, "all" (default);  seperate multiple values by ',' '*' pattern allowed <br> e.g.: 2022r1a, 2022r*
+benchmark-parts = Which parts of Project CodeNet's database will be used. <br> Valid values: 0, 2, 3, 4, "all" (default);  seperate multiple values by ',',   ranges by '-'<br> e.g.: 0,3  or  2-4
 
 [evaluateTool-defaults]
 min-lines = 
