@@ -23,7 +23,7 @@ class Evaluator():
         self.inputFile = Path(args.input).absolute()
         self.outputFile = Path(args.output).absolute()
         self.datasetDirectory = Path(args.dataset_directory)
-        self.options_minimumLines = args.minimum_lines
+        self.options_minimumLines = int(args.minimum_lines)
         self.totalClones = 0
         self.trueDetectedClones = 0
         self.falseDetectedClones = 0
@@ -43,7 +43,7 @@ class Evaluator():
                             default=Path(__file__).parent.parent / "clones.csv")
         parser.add_argument("-o", "--output", required=True, 
                             help="File to write the report to.")
-        parser.add_argument("--minimum-lines", "--min-lines","--mil", required=False, 
+        parser.add_argument("--minimum-lines", "--min-lines","--mil", required=False, type=int,
                             help="Minimum clone size in original lines.", default=0)
         parser.add_argument("-d", "--dataset-directory", required=False, 
                         # default directory in GPTCloneBench benchmark is /cloneDetection/benchmark/input/
