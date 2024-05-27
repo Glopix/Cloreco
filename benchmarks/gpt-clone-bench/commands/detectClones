@@ -61,8 +61,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("-b", "--benchmark-parts", required=False, default="all",
                         help=("Specify particular segments of the benchmark dataset for the clone detection tool to process, "
                             "instead of the entire dataset. " 
-                            "Use comma-separated values for discrete parts (e.g., 'part1,part3'),"
-                            "a range for consecutive segments (e.g., 'part1-part7')"
+                            "Use comma-separated values for discrete parts (e.g., '2,3'),"
+                            "a range for consecutive segments (e.g., '2-5')"
                             "or the wildcard character '*' for patterns." 
                             "Defaults to 'all', indicating the whole dataset. "
                             "Refer to the benchmark documentation for valid segment identifiers."))
@@ -124,7 +124,7 @@ class DetectClones:
             shutil.rmtree(self.scratchDir)
 
     # added: execute detection only on specified parts of the benchmark dataset
-    def _parse_benchmark_parts_input(input: str) -> List[str]:
+    def _parse_benchmark_parts_input(self, input: str) -> List[str]:
         """
         Parse the input string into a list of elements, expanding ranges.
         Returns:
