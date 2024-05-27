@@ -155,8 +155,8 @@ def check_container_registry_login() -> None:
     Environment Variables:
         CONTAINER_REGISTRY_LOGIN_USERNAME:          Username for the container registry.
         CONTAINER_REGISTRY_LOGIN_PASSWORD_TOKEN:    Password or token for the container registry.
-        CONTAINER_REGISTRY_URL:                     URL of the container registry.  ( e.g.: git.uni-jena.de:5050 )
-        CONTAINER_REGISTRY_REPOSITORY:              Container registry with repo    ( e.g.: git.uni-jena.de:5050/user4/myrepo/ )
+        CONTAINER_REGISTRY_URL:                     URL of the container registry.  ( e.g.: ghcr.io )
+        CONTAINER_REGISTRY_REPOSITORY:              Container registry with repo    ( e.g.: ghcr.io/user4/myrepo/ )
         PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY:  Flag to indicate whether to push images to the container registry.
 
     Raises:

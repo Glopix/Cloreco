@@ -22,7 +22,7 @@ templateFiles = dict(
     defaultValueSection = 'detector-argument-defaults',
     # Section in config files, where the Container config is set
     containerSection    = 'container',
-    # Section in config files, where the description or defaults of the global(same for all tools) Big Clone Eval settings are stored
+    # Section in config files, where the description or defaults of the global(same for all tools) Benchmark settings are stored
     benchmarkDescriptionSection  = 'benchmark-argument-descriptions',
     benchmarkDefaultValueSection = 'benchmark-argument-defaults',
     # template for new created tools
@@ -63,5 +63,5 @@ benchmarks = dict(
 ImageBuilder = dict(
     availableJDKs       = ["jdk8", "jdk11", "jdk17"],
     availableDistros    = ["ubuntu22.04", "ubuntu18.04"],
-    baseImage           = "git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/detector-tool-base"
+    baseImage           = "ghcr.io/glopix/abcd-images/detector-tool-base"
 )

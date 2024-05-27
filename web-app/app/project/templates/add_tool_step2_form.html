@@ -93,12 +93,12 @@
     </h3>
     {% endif %}
 
-    {% if form.bceArgs %} 
-        <!-- Default values for big clone eval arguments-->
-        <h2>Big Clone Eval Arguments</h2>
-        <p>These values are not intended for the clone detector tool config, but for the Big Clone Eval commands and the execution of the clone detector tool in the container.</p>
+    {% if form.benchmarkArgs %} 
+        <!-- Default values for Benchmark arguments-->
+        <h2>Benchmark Arguments</h2>
+        <p>These values are not intended for the clone detector tool config, but for the Benchmark Framework commands and the execution of the clone detector tool in the container.</p>
         <fieldset class="pure-g">
-            {% for arg in form.bceArgs %}
+            {% for arg in form.benchmarkArgs %}
                 <div class="argument pure-u-1 pure-u-md-1-2">
                     {{ arg.argument.label }}
 

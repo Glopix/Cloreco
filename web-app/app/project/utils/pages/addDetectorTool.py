@@ -36,12 +36,12 @@ def append_bce_arguments_to_form(form: forms.GitRepoForm|forms.ImageForm) -> for
 
     for argName, argValue in templateFile.items(settings.templateFiles['benchmarkDescriptionSection']):
         # Create a new entry for the FieldList for each BigCloneEval argument
-        form.bceArgs.append_entry()
+        form.benchmarkArgs.append_entry()
 
         # Access the last entry (just new created entry) in the FieldList and set its data
-        #form.bceArgs.entries[-1].argument.name = argName
-        form.bceArgs.entries[-1].argument.label.text = argName
-        form.bceArgs.entries[-1].argument.description = argValue
+        #form.benchmarkArgs.entries[-1].argument.name = argName
+        form.benchmarkArgs.entries[-1].argument.label.text = argName
+        form.benchmarkArgs.entries[-1].argument.description = argValue
 
     return form
 
@@ -78,7 +78,7 @@ def add_detector_tool(formData: forms.GitRepoForm|forms.ImageForm, via: str) -> 
 
 def add_arguments_to_template(toolName: str, formData) -> dict:
     """
-    Add arguments for the new clone detector tool config and Big Clone Eval arguments 
+    Add arguments for the new clone detector tool config and Benchmark arguments 
     to the new template config file. 
     This file is a copy of the template for new tools at project/utils/ImageBuilder/newTool.cfg.template
     and will be modified based on form data from the website.
@@ -211,9 +211,9 @@ def _add_BigCloneEval_arguments(formData, toolFile)-> None:
     section = settings.templateFiles['benchmarkDefaultValueSection']
     options = cp.read_cp_config_file(toolFile).options(section)
     for i, option in enumerate(options):
-        arg = str(formData.bceArgs.data[i]['argument']).strip()
+        arg = str(formData.benchmarkArgs.data[i]['argument']).strip()
         if arg:
-            arguments[option] = formData.bceArgs.data[i]['argument']
+            arguments[option] = formData.benchmarkArgs.data[i]['argument']
 
     cp.update_config(toolFile, section, arguments)
     

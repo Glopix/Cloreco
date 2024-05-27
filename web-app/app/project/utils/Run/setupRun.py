@@ -108,7 +108,7 @@ class SetupRun():
                     'name'      : 'BigCloneEval',
                     'prettyName': 'Big Clone Eval',
                     'container' : {
-                                    'image' : 'git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval', 
+                                    'image' : 'ghcr.io/glopix/abcd-images/big-clone-eval', 
                                     'benchmark_path' : '/cloneDetection/benchmark/'
                                 },
                     },
@@ -116,7 +116,7 @@ class SetupRun():
                     'name'      : 'GoogleCodeJam',
                     'prettyName': 'Google Code Jam',
                     'container' : {
-                                    'image' : 'git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/google-code-jam', 
+                                    'image' : 'ghcr.io/glopix/abcd-images/google-code-jam', 
                                     'benchmark_path' : '/cloneDetection/benchmark/'
                                 },
                     }
@@ -147,7 +147,7 @@ class SetupRun():
                         "detector_config_filename":"Sourcer-CC.cfg.web.template",
                         "entrypoint_config_filename":"entrypoint.cfg",
                         "container":{
-                            "image":"git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/sourcer-cc",
+                            "image":"ghcr.io/glopix/abcd-images/sourcer-cc",
                             "mountpoint_base":"/cloneDetection/",
                             "mountpoint_detector_config":"/cloneDetection/Applications/SourcerCC/clone-detector/sourcerer-cc.properties",
                             "mountpoint_entrypoint_config":"/cloneDetection/entrypoint.cfg"
@@ -157,7 +157,7 @@ class SetupRun():
                         "detector_config_filename":"StoneDetector.cfg.web.template",
                         "entrypoint_config_filename":"entrypoint.cfg",
                         "container":{
-                            "image":"git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/stone-detector",
+                            "image":"ghcr.io/glopix/abcd-images/stone-detector",
                             "mountpoint_base":"/cloneDetection/",
                             "mountpoint_detector_config":"/cloneDetection/Applications/StoneDetector/config/default.properties",
                             "mountpoint_entrypoint_config":"/cloneDetection/entrypoint.cfg"
@@ -204,7 +204,7 @@ class SetupRun():
         """
         Retrieve detector tool config data from the website form and return this data as a dict.
         If the detector tool specific BigCloneEval (detectTools) config (set on the website per detector tool) should be retrieved,
-        a different prefix with the Big Clone Eval config file name (in the containers) will be used to get the values.
+        a different prefix with the Benchmark Framework config file name (in the containers) will be used to get the values.
 
         Returns:
             {

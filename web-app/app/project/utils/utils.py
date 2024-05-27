@@ -230,7 +230,7 @@ def read_description_and_defaults(file: str|ConfigParser, descriptionSection: st
     # Read arguments and descriptions of the detector software from the config file
     arguments = dict(parsedConfigFile[descriptionSection])
 
-    # Read argument defaults of Big Clone Eval specific for this detector software from the config file, if present
+    # Read Benchmark specific argument defaults for this detector software from the config file, if present
     defaults = {}
     if defaultValueSection:
         if defaultValueSection in parsedConfigFile:
@@ -255,8 +255,8 @@ def read_template_file(file: str) -> dict[dict]:
     Reads the configuration from the specified file.
     This includes:  
         container configuration;  
-        arguments, description and default values of detector software
-        arguments, description and default values of Big Clone Eval specific for this detector software
+        arguments, description and default values of detector tool software
+        Benchmark specific arguments, description and default values for this detector tool software
 
     Returns:
         a nested dict

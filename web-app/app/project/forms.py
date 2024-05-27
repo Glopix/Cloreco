@@ -21,10 +21,10 @@ class NewToolArgumentsForm(Form):
     DefaultValue =  StringField('Default value (optional)', 
                                 description="Default values of each arguments.")
 
-class BCE_DefaultValuesForm(Form):
+class BenchmarkDefaultValuesForm(Form):
     """Subform.
 
-    Default values for big clone eval arguments can be set via this form.
+    Default values for the Benchmark arguments can be set via this form.
 
     CSRF is disabled for this subform (using 'Form' as parent class) because
     it is never used by itself.
@@ -97,7 +97,7 @@ class ImageToolForm(Form):
     
     imageURL           = StringField( 'Image URL',
                             description="""remote image URL, where the clone detector tool is stored in a (docker) image, e.g.: <br> 
-                            git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/stone-detector:latest """,
+                            ghcr.io/glopix/abcd-images/stone-detector:latest """,
                             validators=[DataRequired()]
                         )
 
@@ -114,8 +114,8 @@ class ImageForm(FlaskForm):
                 )
     toolArgsFile = FileField('Tool arguments file in shell-style') # optional
 
-    bceArgs = FieldList(
-                    FormField(BCE_DefaultValuesForm),
+    benchmarkArgs = FieldList(
+                    FormField(BenchmarkDefaultValuesForm),
                 )
 
     submit = SubmitField('Submit')
