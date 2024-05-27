@@ -22,8 +22,19 @@
     </ul>
 </div>
 
+<!-- 
+    Displays a message from the server after form submission. 
+    Indicates whether the run was successfully started, canceled, or if the form data was invalid.
+-->
+{# create the messageFromServer variable, if it is undefined #}
+    {% set messageFromServer = none if messageFromServer is not defined else messageFromServer %}
+
+    {{ display_message_from_server(messageFromServer) }}
+
+
+<!-- "Run" form: select bechmarks and clone detector tools -->
 <form method="post" action="/run" class="pure-form pure-form-stacked" id="run-form">
-    <!-- BEGIN shared bechmarks config for all detector tools -->
+    <!-- BEGIN benchmarks and their configuration, the same configs are used for all detector tools -->
     <legend class="benchmarks-legend">Benchmarks</legend>
     {% for benchmark in benchmarks %}
     <div class="accordion benchmark">
@@ -66,7 +77,7 @@
         </div>
     </div>
     {% endfor %}
-    <!-- END shared benchmarks config for all detector tools -->
+    <!-- END benchmarks and their config -->
 
     <legend class="tools-legend">Clone detector tools</legend>
     <!-- one Section/Accordion for each detector tool -->
@@ -137,11 +148,6 @@
         </button>
     </div>
 </form>
-
-    {# create the messageFromServer variable, if it is undefined #}
-    {% set messageFromServer = none if messageFromServer is not defined else messageFromServer %}
-
-    {{ display_message_from_server(messageFromServer) }}
 
 <script>
     function displayMessage(message){
