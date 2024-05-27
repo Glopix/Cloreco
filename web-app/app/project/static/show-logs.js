@@ -73,6 +73,17 @@ document.addEventListener('DOMContentLoaded', function() {
         progressBar.classList.add("hidden");
     }
 
+    function toggle_loading_icon(enabled) {
+        const loadingIcon = document.getElementById("loading-spinner");
+
+        if (enabled == true) {
+            loadingIcon.classList.remove("hidden")
+        }
+        else {
+            loadingIcon.classList.add("hidden")
+        }
+    }
+
     const nextStepButton = document.getElementById("nextStep");
     // show, enable or disabled "nextStep" button, 
     // if the logs are for an imageBuild process 
@@ -202,6 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function stop_check_heartbeat() {
         if (heartbeatInterval) {
             clearInterval(heartbeatInterval);
+            toggle_loading_icon(false)
             heartbeatInterval = undefined;
         }
     }
@@ -209,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function check_heartbeat() {
         const currentTime = Date.now();
         if (currentTime - lastHeartbeatTime > 2000) {
+            // no heartbeat was received in time (2 seconds)
             // Display an error message in the progress bar
             heartbeatReceived = false;
             let progressUpdate = {
@@ -216,10 +229,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentMessage: "No run seems to be executed at the moment"
             };
             update_progress_bar(progressUpdate);
-        } else if (!heartbeatReceived) {
-            // Clear the error message and restore last "normal" message if heartbeat is received
-            update_progress_bar(progress);
-            heartbeatReceived = true;
+            toggle_loading_icon(false)
+        } else {
+            // heartbeat was received in time, everything is fine
+            
+            if (!heartbeatReceived) {
+                // Clear the error message and restore last "normal" message if heartbeat is received
+                update_progress_bar(progress);
+                toggle_loading_icon(false)
+                heartbeatReceived = true;
+
+                toggle_loading_icon(true)
+            }
         }
     }
 
@@ -227,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function control_heartbeats() {
         if (progress.isExecuted === "True") {
             start_check_heartbeat();
+            toggle_loading_icon(true)
         } else {
             stop_check_heartbeat();
         }
