@@ -1,5 +1,5 @@
 [container]
-image = ghcr.io/glopix/abcd-images/nil:latest
+image = ghcr.io/glopix/cloreco-images/nil:latest
 mountpoint_base = /cloneDetection/
 mountpoint_detector_config = /cloneDetection/Applications/nil/NIL.config
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg

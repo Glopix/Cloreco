@@ -63,5 +63,5 @@ benchmarks = dict(
 ImageBuilder = dict(
     availableJDKs       = ["jdk8", "jdk11", "jdk17"],
     availableDistros    = ["ubuntu22.04", "ubuntu18.04"],
-    baseImage           = "ghcr.io/glopix/abcd-images/detector-tool-base"
+    baseImage           = "ghcr.io/glopix/cloreco-images/detector-tool-base"
 )

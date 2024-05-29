@@ -2,7 +2,7 @@
 pretty_name = Big Clone Eval
 
 [container]
-image = ghcr.io/glopix/abcd-images/big-clone-eval-benchmark
+image = ghcr.io/glopix/cloreco-images/big-clone-eval-benchmark
 benchmark_path = /cloneDetection/BigCloneEval/
 
 [detectClones-defaults]

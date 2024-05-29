@@ -27,7 +27,7 @@ find ./input/ -type f -exec chmod 664 {} \;
 echo "sorting directories"
 ./prepare/sort_directories.py --input-directory ./input/
 
-IMAGE_NAME="ghcr.io/glopix/abcd-images/project-codenet-benchmark:latest"
+IMAGE_NAME="ghcr.io/glopix/cloreco-images/project-codenet-benchmark:latest"
 
 docker build . -t "$IMAGE_NAME"
 docker push "$IMAGE_NAME"

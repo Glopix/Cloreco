@@ -1,7 +1,7 @@
 # generic Dockerfile
 # used to build images from a script (from a git repository)
 
-ARG BASE_IMAGE=ghcr.io/glopix/abcd-images/detector-tool-base
+ARG BASE_IMAGE=ghcr.io/glopix/cloreco-images/detector-tool-base
 ARG DISTRO
 ARG JDK_VERSION
 

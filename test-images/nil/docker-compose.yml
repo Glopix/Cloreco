@@ -1,7 +1,7 @@
 version: '3.10'
 services:
   nil:
-    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/nil
+    image: ghcr.io/glopix/cloreco-images/nil
     container_name: nil
     volumes:
       # mount config file

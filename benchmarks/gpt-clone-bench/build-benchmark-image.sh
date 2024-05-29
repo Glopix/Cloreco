@@ -49,7 +49,7 @@ find ./input/ -type d -empty -delete
 
 rm -f ./input/*.md ./input/*.txt
 
-IMAGE_NAME="ghcr.io/glopix/abcd-images/gpt-clone-bench-benchmark:latest"
+IMAGE_NAME="ghcr.io/glopix/cloreco-images/gpt-clone-bench-benchmark:latest"
 
 docker build . -t "$IMAGE_NAME"
 docker push "$IMAGE_NAME"

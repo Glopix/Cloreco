@@ -1,5 +1,5 @@
 [container]
-image = ghcr.io/glopix/abcd-images/nicad
+image = ghcr.io/glopix/cloreco-images/nicad
 mountpoint_base = /cloneDetection/
 mountpoint_detector_config = /cloneDetection/Applications/NiCad/config/myconfig.cfg
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg

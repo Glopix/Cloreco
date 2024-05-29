@@ -2,7 +2,7 @@
 pretty_name = GPTCloneBench
 
 [container]
-image = ghcr.io/glopix/abcd-images/gpt-clone-bench-benchmark
+image = ghcr.io/glopix/cloreco-images/gpt-clone-bench-benchmark
 benchmark_path = /cloneDetection/benchmark/
 
 [detectClones-defaults]

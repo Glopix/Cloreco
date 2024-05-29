@@ -22,7 +22,7 @@ fi
 
 ./prepare/prepare-files.sh
 
-IMAGE_NAME="ghcr.io/glopix/abcd-images/google-code-jam-benchmark:latest"
+IMAGE_NAME="ghcr.io/glopix/cloreco-images/google-code-jam-benchmark:latest"
 
 docker build . -t "$IMAGE_NAME"
 docker push "$IMAGE_NAME"

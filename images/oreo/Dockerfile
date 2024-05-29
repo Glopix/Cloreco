@@ -38,3 +38,4 @@ RUN chmod +x ${app}/oreoRunner.sh
 # set environmental variable: path of runner script (used by entrypoint.py)
 ENV RUNNER_SCRIPT_PATH=${app}/oreoRunner.sh
 
+LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images

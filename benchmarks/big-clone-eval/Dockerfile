@@ -13,6 +13,8 @@ ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
 
 WORKDIR /cloneDetection/
-COPY --from=ghcr.io/glopix/abcd-images/big-clone-eval-base /cloneDetection /cloneDetection
+COPY --from=ghcr.io/glopix/cloreco-images/big-clone-eval-base /cloneDetection /cloneDetection
 
 ENTRYPOINT ["/usr/bin/sleep", "1"]
+
+LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images

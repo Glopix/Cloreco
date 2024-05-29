@@ -31,3 +31,5 @@ ADD ./nicadRunner.sh ${app}/nicadRunner.sh
 RUN chmod +x ${app}/nicadRunner.sh
 # set environmental variable: path of runner script (used by entrypoint.py)
 ENV RUNNER_SCRIPT_PATH=${app}/nicadRunner.sh
+
+LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images

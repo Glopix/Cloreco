@@ -17,7 +17,8 @@ from pathlib import Path
 import subprocess
 from argparse import ArgumentParser
 
-repo = 'ghcr.io/glopix/abcd-images'
+# Repository/Registry to which the created images are pushed
+repo = 'ghcr.io/glopix/cloreco-images'
 path = Path(__file__).parent
 
 parser = ArgumentParser()

@@ -55,4 +55,3 @@ COPY --from=build /cloneDetection/BigCloneEval/ijadataset/       /cloneDetection
 COPY --from=build /cloneDetection/BigCloneEval/libs/             /cloneDetection/BigCloneEval/libs/
 COPY --from=build /cloneDetection/BigCloneEval/toolsdb/          /cloneDetection/BigCloneEval/toolsdb/
 
-

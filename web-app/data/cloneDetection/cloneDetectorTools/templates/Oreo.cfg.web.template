@@ -1,5 +1,5 @@
 [container]
-image = ghcr.io/glopix/abcd-images/oreo
+image = ghcr.io/glopix/cloreco-images/oreo
 mountpoint_base = /cloneDetection/
 mountpoint_detector_config = /cloneDetection/Applications/Oreo/clone-detector/sourcerer-cc.properties
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg

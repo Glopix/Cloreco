@@ -1,5 +1,5 @@
 [container]
-image = ghcr.io/glopix/abcd-images/deckard:latest
+image = ghcr.io/glopix/cloreco-images/deckard:latest
 mountpoint_base = /cloneDetection/
 mountpoint_detector_config = /cloneDetection/Applications/Deckard/config
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg

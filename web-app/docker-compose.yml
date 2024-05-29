@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
 
   web:
-    image: ghcr.io/glopix/abcd/abcd-frontend
+    image: ghcr.io/glopix/cloreco/cloreco-frontend
     restart: unless-stopped
     depends_on:
       - redis
@@ -15,7 +15,7 @@ services:
       - 5000:5000
 
   celery:
-    image: ghcr.io/glopix/abcd/abcd-backend
+    image: ghcr.io/glopix/cloreco/cloreco-backend
     restart: unless-stopped
     depends_on:
       - redis
@@ -31,6 +31,7 @@ services:
     volumes:
     # data directory
       - ./data/:/app/data/
+      #- ./app/project:/app/project/
       - /var/run/docker.sock:/var/run/docker.sock
 
     # give celery more time to abort the running task and remove the running containers at shutdown

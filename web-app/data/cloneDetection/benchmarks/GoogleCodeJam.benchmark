@@ -2,7 +2,7 @@
 pretty_name = Google Code Jam
 
 [container]
-image = ghcr.io/glopix/abcd-images/google-code-jam-benchmark:latest
+image = ghcr.io/glopix/cloreco-images/google-code-jam-benchmark:latest
 benchmark_path = /cloneDetection/benchmark/
 
 [detectClones-defaults]

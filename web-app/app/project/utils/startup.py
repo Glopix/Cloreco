@@ -1,5 +1,5 @@
 """
-functions in this file are executed once at the start of ABCD web platform
+functions in this file are executed once at the start of Cloreco web platform
 """
 from celery.signals import celeryd_after_setup
 import sys

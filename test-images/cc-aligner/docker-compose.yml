@@ -1,7 +1,7 @@
 version: '3.10'
 services:
   cc-aligner:
-    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/cc-aligner
+    image: ghcr.io/glopix/cloreco-images/cc-aligner
     container_name: cc-aligner
     volumes:
       # mount config file of clone detection tool

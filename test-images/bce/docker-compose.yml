@@ -1,7 +1,7 @@
 version: '3.10'
 services:
   bce:
-    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval-benchmark
+    image: ghcr.io/glopix/cloreco-images/big-clone-eval-benchmark
     container_name: big-clone-eval-benchmark
     volumes:
       # mount config file of BigCloneEval commands (used by entrypoint.py)

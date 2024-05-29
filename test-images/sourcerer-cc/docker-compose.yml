@@ -1,8 +1,8 @@
 version: '3.10'
 services:
   sourcer-cc:
-    image: git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/sourcer-cc
-    container_name: sourcer-cc
+    image: ghcr.io/glopix/cloreco-images/sourcerer-cc
+    container_name: sourcerer-cc
     volumes:
       # mount config file
       - ./sourcerer-cc.properties:/cloneDetection/Applications/SourcerCC/clone-detector/sourcerer-cc.properties

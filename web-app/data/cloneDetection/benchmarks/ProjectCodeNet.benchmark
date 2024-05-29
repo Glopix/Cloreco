@@ -2,7 +2,7 @@
 pretty_name = Project CodeNet
 
 [container]
-image = ghcr.io/glopix/abcd-images/project-codenet-benchmark:latest
+image = ghcr.io/glopix/cloreco-images/project-codenet-benchmark:latest
 benchmark_path = /cloneDetection/benchmark/
 
 [detectClones-defaults]

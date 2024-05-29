@@ -1,7 +1,7 @@
 """
 functions in this file are used to create (docker) images,
 based on a given git repository
-for later use in the website/ABCD software
+for later use in the website/Cloreco software
 """
 from pathlib import Path
 import docker

@@ -12,6 +12,7 @@ ENV PYTHONUNBUFFERED=TRUE
 
 WORKDIR /app
 
+LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco
 
 
 # frontend image, used to run the gunicorn webserver and flask

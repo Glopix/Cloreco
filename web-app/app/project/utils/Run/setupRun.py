@@ -108,7 +108,7 @@ class SetupRun():
                     'name'      : 'BigCloneEval',
                     'prettyName': 'Big Clone Eval',
                     'container' : {
-                                    'image' : 'ghcr.io/glopix/abcd-images/big-clone-eval', 
+                                    'image' : 'ghcr.io/glopix/cloreco-images/big-clone-eval', 
                                     'benchmark_path' : '/cloneDetection/benchmark/'
                                 },
                     },
@@ -116,7 +116,7 @@ class SetupRun():
                     'name'      : 'GoogleCodeJam',
                     'prettyName': 'Google Code Jam',
                     'container' : {
-                                    'image' : 'ghcr.io/glopix/abcd-images/google-code-jam', 
+                                    'image' : 'ghcr.io/glopix/cloreco-images/google-code-jam', 
                                     'benchmark_path' : '/cloneDetection/benchmark/'
                                 },
                     }
@@ -147,7 +147,7 @@ class SetupRun():
                         "detector_config_filename":"Sourcer-CC.cfg.web.template",
                         "entrypoint_config_filename":"entrypoint.cfg",
                         "container":{
-                            "image":"ghcr.io/glopix/abcd-images/sourcer-cc",
+                            "image":"ghcr.io/glopix/cloreco-images/sourcer-cc",
                             "mountpoint_base":"/cloneDetection/",
                             "mountpoint_detector_config":"/cloneDetection/Applications/SourcerCC/clone-detector/sourcerer-cc.properties",
                             "mountpoint_entrypoint_config":"/cloneDetection/entrypoint.cfg"
@@ -157,7 +157,7 @@ class SetupRun():
                         "detector_config_filename":"StoneDetector.cfg.web.template",
                         "entrypoint_config_filename":"entrypoint.cfg",
                         "container":{
-                            "image":"ghcr.io/glopix/abcd-images/stone-detector",
+                            "image":"ghcr.io/glopix/cloreco-images/stone-detector",
                             "mountpoint_base":"/cloneDetection/",
                             "mountpoint_detector_config":"/cloneDetection/Applications/StoneDetector/config/default.properties",
                             "mountpoint_entrypoint_config":"/cloneDetection/entrypoint.cfg"

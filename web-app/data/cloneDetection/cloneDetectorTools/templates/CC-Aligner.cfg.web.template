@@ -1,5 +1,5 @@
 [container]
-image = ghcr.io/glopix/abcd-images/cc-aligner
+image = ghcr.io/glopix/cloreco-images/cc-aligner
 mountpoint_base = /cloneDetection/
 mountpoint_detector_config = /cloneDetection/Applications/CCAligner/config.cfg
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg

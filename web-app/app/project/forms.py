@@ -97,7 +97,7 @@ class ImageToolForm(Form):
     
     imageURL           = StringField( 'Image URL',
                             description="""remote image URL, where the clone detector tool is stored in a (docker) image, e.g.: <br> 
-                            ghcr.io/glopix/abcd-images/stone-detector:latest """,
+                            ghcr.io/glopix/cloreco-images/stone-detector:latest """,
                             validators=[DataRequired()]
                         )
 

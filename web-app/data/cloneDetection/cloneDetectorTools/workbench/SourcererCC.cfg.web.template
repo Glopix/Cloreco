@@ -1,5 +1,5 @@
 [container]
-image = ghcr.io/glopix/abcd-images/sourcerer-cc
+image = ghcr.io/glopix/cloreco-images/sourcerer-cc
 mountpoint_base = /cloneDetection/
 mountpoint_detector_config = /cloneDetection/Applications/SourcerCC/clone-detector/sourcerer-cc.properties
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg
