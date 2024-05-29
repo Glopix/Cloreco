@@ -9,6 +9,7 @@ import project.settings as settings
 import project.utils.configFilesParser.shellConfigFiles as sc
 import project.utils.configFilesParser.configParserFiles as cp
 from os import environ
+from time import sleep
 from shutil import copy2
 import docker, docker.errors
 from project.utils import utils
@@ -123,6 +124,7 @@ def on_celeryd_startup(sender=None, instance=None, **kwargs):
                            {exc}""", 
                            "error")
         print(exc)
+        sleep(5)
         sys.exit(1)
     else:
         set_startup_status("Startup successful! Runs can now be started.", "success")
@@ -211,8 +213,15 @@ def check_images() -> None:
     (e.g., due to the 'UPDATE_IMAGES_ON_STARTUP' option being disabled, 
         missing Images in the remote repository or network failures), 
     it prints an error message detailing the missing images and raises a exception.
+
+    This check can be skipped by setting the 'SKIP_IMAGES_CHECK_ON_STARTUP' environment variable to a truthy value.
     """
     updateImages = environ.get('UPDATE_IMAGES_ON_STARTUP', default="True").lower() in ('true', '1', 't', 'yes')
+    skipImageCheck = environ.get('SKIP_IMAGES_CHECK_ON_STARTUP', default="False").lower() in ('true', '1', 't', 'yes')
+
+    if skipImageCheck:
+        print("Image check is skipped")
+        return
 
     images = []
     templateDir = settings.directories["confTemplates"]

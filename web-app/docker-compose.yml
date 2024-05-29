@@ -23,6 +23,8 @@ services:
       # run pull for all images of clone detector tools and benchmarks at startup? (default: true)
       UPDATE_IMAGES_ON_STARTUP: True
 
+      #SKIP_IMAGES_CHECK_ON_STARTUP: True
+
       # push new images ( created via 'add new Tool' web page) to the container registry?
       PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY: False
     env_file:
