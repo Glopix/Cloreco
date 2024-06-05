@@ -8,7 +8,7 @@ Features:
  - use one or multiple clone benchmarks
  - configure the options of benchmarks and clone detector tools
  - access and download the execution/evaluation results, used settings, recognised clones, etc.
- - recall display in interactive charts
+ - display recall and runtime in (interactive) charts
  - display the current execution progress
  - add new clone detection tools via image or git repository
  - add new benchmarks (manually, without web interface)
