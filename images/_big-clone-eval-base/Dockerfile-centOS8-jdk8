@@ -1,5 +1,5 @@
 # BigCloneEval base image
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval:centOS8-jdk8
+# docker build . -t ghcr.io/glopix/cloreco-images/big-clone-eval:centOS8-jdk8
 FROM centos:centos8
 
 # CentOS 8 reached the End Of Life (EOL) on December 31st, 2021, thus it no longer receives development resources from the official CentOS project

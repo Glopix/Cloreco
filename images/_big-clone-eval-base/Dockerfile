@@ -1,5 +1,5 @@
 # BigCloneEval base image
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval-base
+# docker build . -t ghcr.io/glopix/cloreco-images/big-clone-eval-base
 
 ARG DISTRO=ubuntu:22.04
 

@@ -1,7 +1,7 @@
 # iClones
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/iclones:latest --build-arg GITLAB_ACCESS_TOKEN=XXXXX
+# docker build . -t ghcr.io/glopix/cloreco-images/iclones:latest --build-arg GITLAB_ACCESS_TOKEN=XXXXX
 
-FROM git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval:ubuntu22.04-jdk11
+FROM ghcr.io/glopix/cloreco-images/big-clone-eval:ubuntu22.04-jdk11
 
 ARG app=/cloneDetection/Applications/iClones/
 ARG GITLAB_ACCESS_TOKEN

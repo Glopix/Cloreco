@@ -1,10 +1,10 @@
 # Oreo
 # https://github.com/Mondego/oreo
 # https://github.com/Mondego/oreo-artifact/blob/master/INSTALL.md
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/oreo:latest
+# docker build . -t ghcr.io/glopix/cloreco-images/oreo:latest
 
 # use Ubuntu 18.04 as base, since it provides python3.6 for Oreo
-FROM git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/detector-tool-base:ubuntu18.04-jdk8
+FROM ghcr.io/glopix/cloreco-images/detector-tool-base:ubuntu18.04-jdk8
 
 ARG app=/cloneDetection/Applications/Oreo/
 WORKDIR ${app}

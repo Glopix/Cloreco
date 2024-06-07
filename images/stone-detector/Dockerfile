@@ -1,7 +1,7 @@
 # StoneDetector
 # https://github.com/StoneDetector/StoneDetector
 # based on https://github.com/StoneDetector/StoneDetector/blob/main/Dockerfile
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/stone-detector:latest
+# docker build . -t ghcr.io/glopix/cloreco-images/stone-detector:latest
 
 FROM gradle:6.3.0-jdk11 AS build
 
@@ -26,7 +26,7 @@ RUN gradle jar --no-daemon
 
 
 #FROM openjdk:11-jre-slim
-FROM git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/detector-tool-base:ubuntu22.04-jdk11
+FROM ghcr.io/glopix/cloreco-images/detector-tool-base:ubuntu22.04-jdk11
 
 ARG app=/cloneDetection/Applications/StoneDetector/
 

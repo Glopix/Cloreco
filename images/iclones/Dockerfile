@@ -1,13 +1,13 @@
 # iClones
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/iclones:latest --build-arg GITLAB_ACCESS_TOKEN=XXXXX
+# docker build . -t ghcr.io/glopix/cloreco-images/iclones:latest --build-arg GITLAB_ACCESS_TOKEN=XXXXX
 
 # Important:
 # The domain on which iClones was provided (www.softwareclones.org) is no longer available.
 # This means that the docker build process for iClones also fails, as an attempt is made to download packages from www.softwareclones.org before/during compilation. This fails and so does the build process.
-# A Docker image with fully compiled iClones is still available.(git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/iClones:last-successfull-build) 
+# A Docker image with fully compiled iClones is still available.(ghcr.io/glopix/cloreco-images/iClones:last-successfull-build) 
 # However, changes to the base image (essentially entrypoint.py) must be made via this Dockerfile.
 
-FROM git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/iclones:last-successfull-build
+FROM ghcr.io/glopix/cloreco-images/iclones:last-successfull-build
 
 ENV LANG=C.UTF-8 \
     LANGUAGE=C.UTF-8 \

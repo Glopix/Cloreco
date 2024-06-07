@@ -1,7 +1,7 @@
 # CCAligner
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/cc-aligner:latest
+# docker build . -t ghcr.io/glopix/cloreco-images/cc-aligner:latest
 
-FROM git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/detector-tool-base:ubuntu22.04-jdk17
+FROM ghcr.io/glopix/cloreco-images/detector-tool-base:ubuntu22.04-jdk17
 
 ARG app=/cloneDetection/Applications/CCAligner/
 

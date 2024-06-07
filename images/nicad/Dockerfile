@@ -1,7 +1,7 @@
 # NiCad
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/ni-cad:latest
+# docker build . -t ghcr.io/glopix/cloreco-images/ni-cad:latest
 
-FROM git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/detector-tool-base:latest
+FROM ghcr.io/glopix/cloreco-images/detector-tool-base:latest
 
 ARG app=/cloneDetection/Applications/NiCad/
 

@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 
+from os import environ
+
 if __name__ == "__main__":
-    functionSet = set()
-    with open("Functions.txt") as f:
-        for line in f:
-            line = line.rstrip()
-            functionSet.add(line)
+    filterOutput = False
+    if environ.get('BENCHMARK_NAME') == "BigCloneEval":
+        filterOutput = True
+
+    if filterOutput:
+        functionSet = set()
+        with open("Functions.txt") as f:
+            for line in f:
+                line = line.rstrip()
+                functionSet.add(line)
+    
     with open("../clusters/post_cluster_vdb_125_2_allg_0.70_50") as f:
         parts = []
         for line in f:
@@ -30,5 +38,8 @@ if __name__ == "__main__":
                 functionIdent = (
                     subFolder + "," + fileName + "," + str(startLine) + "," + str(endLine)
                 )
-                if functionIdent in functionSet:
+                if filterOutput:
+                    if functionIdent in functionSet:
+                        parts.append(functionIdent)
+                else:
                     parts.append(functionIdent)

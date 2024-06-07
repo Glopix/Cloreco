@@ -1,6 +1,6 @@
 # base image for detector tools
-# docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval-benchmark --build-arg DISTRO=<distro> 
-# e.g. docker build . -t git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval-benchmark --build-arg DISTRO=ubuntu:latest
+# docker build . -t ghcr.io/glopix/cloreco-images/big-clone-eval-benchmark --build-arg DISTRO=<distro> 
+# e.g. docker build . -t ghcr.io/glopix/cloreco-images/big-clone-eval-benchmark --build-arg DISTRO=ubuntu:latest
 
 ARG DISTRO=ubuntu:latest
 
