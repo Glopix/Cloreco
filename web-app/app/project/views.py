@@ -132,7 +132,7 @@ def show_logs(logCategory: str ="run"):
 @main.route('/downloads')
 def downloads():
     #file_list = list_downloads()
-    return redirect("/downloads/ ")
+    return redirect("/downloads/")
 
 
 # List all files and directories in a directory
