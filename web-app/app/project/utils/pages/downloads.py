@@ -146,7 +146,7 @@ def serve_file(filePath: str):
     # safety check: make sure the destination file is a child of the base (downloads) directory
     # to ensure no files outside of the downloads directory can be leaked
     if not input_path_is_valid(filePath):
-        return None
+        return "File not found", 404
     
     fileDir = filePath.parent
     file = filePath.name

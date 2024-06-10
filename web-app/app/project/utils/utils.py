@@ -6,9 +6,9 @@ from pathlib import Path
 from shutil import copy2
 
 
-def read_benchmark_files() -> list[dict]:
+def read_benchmark_files(fromDir:str = None) -> list[dict]:
     """
-    Reads all benchmark files (<Name>.benchmark in data/cloneDetection/benchmarks/ )
+    Reads all benchmark files (<Name>.benchmark in data/cloneDetection/benchmarks/ or in fromDir)
     and extracts the following informations for each benchmark:
         - name of the benchmark     (e.g. GoogleCodeJam)
         - filename of the benachmark (e.g. GoogleCodeJam.benchmark)
@@ -48,7 +48,7 @@ def read_benchmark_files() -> list[dict]:
                         ...
                     ],
                     "container":{
-                        "image":"git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/big-clone-eval",
+                        "image":"ghcr.io/glopix/cloreco-images/big-clone-eval",
                         "benchmark_path":"/cloneDetection/benchmark/"
                     }
                 },
@@ -64,14 +64,17 @@ def read_benchmark_files() -> list[dict]:
                         ...
                     ],
                     "container":{
-                        "image":"git.uni-jena.de:5050/pi65gop/klondetektoren-automatisierung/google-code-jam",
+                        "image":"ghcr.io/glopix/cloreco-images/google-code-jam",
                         "benchmark_path":"/cloneDetection/benchmark/"
                     }
                 }
             ]
     """
+    if fromDir:
+        dir = Path(fromDir)
+    else:
+        dir = Path(settings.directories["benchmarks"])
 
-    dir = Path(settings.directories["benchmarks"])
     fileExtension = settings.benchmarks["fileExtension"]
     containerSection = settings.benchmarks["containerSection"]
 
@@ -107,7 +110,7 @@ def read_benchmark_files() -> list[dict]:
     # sort the list of dictionaries by the 'name' key
     return sorted(benchmarks, key=lambda x: x['name'])
 
-def read_template_files(dir: str = "") -> list[dict]:
+def read_template_files(fromDir:str = None) -> list[dict]:
     """
     reads configuration from all files in the workbench directory or the specified directory
 
@@ -180,15 +183,18 @@ def read_template_files(dir: str = "") -> list[dict]:
         },
     ]
     """
-    if not dir: 
-        dir = settings.directories["confWorkbench"]
+    if fromDir: 
+        dir = Path(fromDir)
+    else:
+        dir = Path(settings.directories["confWorkbench"])
 
     configFiles = []
+    fileExtensionWebCfg = settings.templateFiles['fileExtensionWebEdit']
 
-    for file in glob(f"{dir}/*{settings.templateFiles['fileExtensionWebEdit']}"):
+    for file in dir.glob(f"*{fileExtensionWebCfg}"):
         file = Path(file)
         config = read_template_file(file)
-        detectorName = file.name.split(settings.templateFiles['fileExtensionWebEdit'],1)[0]
+        detectorName = file.name.split(fileExtensionWebCfg, 1)[0]
         baseFile = Path(f"{detectorName}{settings.templateFiles['fileExtensionBase']}")
 
         configFiles.append(

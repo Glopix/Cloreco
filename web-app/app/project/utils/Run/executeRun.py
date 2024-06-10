@@ -282,12 +282,16 @@ class ExecuteRun(AbortableTask):
             # try to remove volume
             try:
                 volume.remove(force=True)
+                self.log.trace("Benchmark volume removed")
                 return
             except docker.errors.APIError as exc:
+                if "volume is in use" in str(exc):
+                    print("removing Benchmark volume...")
+                else:
+                    print(f"Warning: {exc}")
+                    print(f"Warning Exception type: {type(exc)}")
                 # short time delay to ensure docker recognizes that all linked containers are removed. 
                 sleep(1)
-                print(exc)
-                print(type(exc))
                 #raise exc
 
     def _prepare_paths(self, fileName: str, detectorName: str, detector: dict, pathInContainer: str = False) -> SimpleNamespace:
@@ -449,7 +453,8 @@ class ExecuteRun(AbortableTask):
         benchmarkVolume = self.currentBenchmark["volume"].name
 
         env = {
-            "CLONE_DETECTOR_TOOL_NAME": prettyDetectorName
+            "CLONE_DETECTOR_TOOL_NAME"  : prettyDetectorName,
+            "BENCHMARK_NAME"            : self.currentBenchmark["name"]
         }
 
         # Define container configuration

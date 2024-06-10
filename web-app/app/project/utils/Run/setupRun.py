@@ -8,10 +8,11 @@ from shutil import copy2
 import project.utils.configFilesParser.configParserFiles as cp
 from pathlib import Path
 from re import fullmatch
+import shutil
 
 class SetupRun():
 
-    def __init__(self, formData) -> None:
+    def __init__(self, formData, cliMode:bool = False, importDir:str = None) -> None:
         self.formData           = formData
         self.templateDir        = Path(settings.directories["confWorkbench"])
         self.runDir             = get_run_directory(runName=self.formData.get("runName"))
@@ -19,6 +20,14 @@ class SetupRun():
         self.benchmarks         = read_benchmark_files()
         self.detectorTemplates  = read_template_files()
         self.redis              = configure_redis()
+
+        self.cliMode            = cliMode
+        if cliMode:
+            if importDir:
+                self.importDir      = Path(importDir)  # only used for CLI Mode
+            else:
+                raise ValueError("value of paramter importDir missing")
+            
 
     def get_selected(self, templates: list[dict]) -> list[dict]:
         """
@@ -44,7 +53,7 @@ class SetupRun():
 
     def start_run(self) -> dict:
 
-        # TODO: only for debugging, to allow mutliple runs at the same time
+        # only used for debugging, to allow mutliple runs at the same time
         #self.redis.set("run.status", "finished")
 
         # prevent whitespaces, since this could lead to error in docker
@@ -75,8 +84,22 @@ class SetupRun():
             return {'type': "error", 
                     'message': "no benchmark selected" }
 
-        # get website form data and save to config files in run dir
-        self.form_data_to_files()
+        if self.cliMode:
+            if not self.importDir.is_dir():
+                raise NotADirectoryError(f"{self.importDir} is not a directory")
+            
+            # Copies the entire directory recursively from self.importDir (given as CLI option) to the new run directory. 
+            # If the destination directory already exist, it will be overwritten (dirs_exist_ok=True).
+            # Files matching the patterns '*.csv', '*.report', and '*.log' will be ignored during the copy process.
+            csvSuffix = settings.benchmarks['detectedClonesFileExtension']
+            ReportSuffix = settings.benchmarks['reportFileExtension']
+
+            shutil.copytree(self.importDir, self.runDir, dirs_exist_ok=True, 
+                            ignore=shutil.ignore_patterns(csvSuffix, ReportSuffix,'*.log'))
+
+        else:
+            # get website form data and save to config files in run dir
+            self.form_data_to_files()
 
         # extract container config from config templates
         containerConfigs = self.assamble_container_configs()
@@ -88,8 +111,11 @@ class SetupRun():
         # in celery task queue, executed by worker services in the background
         start_container_runner.apply_async(args=(containerConfigs, str(self.runDir), benchmarks))
 
-        return {'type': "success", 
-                'message': f"""Run started. <br>
+        if self.cliMode: 
+            return {'type': "success", 'message': f"""Run started."""}
+        else:
+            return {'type': "success", 
+                    'message': f"""Run started. <br>
                             The current progress can be monitored via the 
                             '<a href="{url_for("main.show_logs", logCategory="run")}">Logs (Run)</a>' 
                             menu item."""}
