@@ -23,4 +23,4 @@ RUN ./init
 # run detectClones and evaluateTool in script
 ENTRYPOINT ["/usr/bin/python3", "/cloneDetection/entrypoint.py"]
 
-LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images
+LABEL org.opencontainers.image.source=https://github.com/Glopix/Cloreco-images

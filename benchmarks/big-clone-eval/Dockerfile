@@ -17,4 +17,4 @@ COPY --from=ghcr.io/glopix/cloreco-images/big-clone-eval-base /cloneDetection /c
 
 ENTRYPOINT ["/usr/bin/sleep", "1"]
 
-LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images
+LABEL org.opencontainers.image.source=https://github.com/Glopix/Cloreco-images

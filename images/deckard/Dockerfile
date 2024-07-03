@@ -31,4 +31,4 @@ RUN chmod +x ${app}/deckardRunner.sh
 # set environmental variable: path of runner script (used by entrypoint.py)
 ENV RUNNER_SCRIPT_PATH=${app}/deckardRunner.sh
 
-LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images
+LABEL org.opencontainers.image.source=https://github.com/Glopix/Cloreco-images

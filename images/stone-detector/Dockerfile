@@ -53,4 +53,4 @@ RUN chmod +x ${app}/BCE_runner
 # set environmental variable: path of runner script (used by entrypoint.py)
 ENV RUNNER_SCRIPT_PATH=${app}/BCE_runner
 
-LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images
+LABEL org.opencontainers.image.source=https://github.com/Glopix/Cloreco-images

@@ -36,4 +36,4 @@ RUN chmod +x ${app}/SourcerCC_Runner.sh
 # set environmental variable: path of runner script (used by entrypoint.py)
 ENV RUNNER_SCRIPT_PATH=${app}/SourcerCC_Runner.sh
 
-LABEL org.opencontainers.image.source https://github.com/Glopix/Cloreco-images
+LABEL org.opencontainers.image.source=https://github.com/Glopix/Cloreco-images
