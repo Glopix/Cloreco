@@ -15,7 +15,7 @@ rm -rf ./input/
 mkdir -p ./input/
 tar -C ./input/ --strip-components 1 -xf Project_CodeNet_Java250.tar.gz Project_CodeNet_Java250
 
-# Execute rm commands only if "nocleanup" argument is specified
+# Skip rm commands only if "nocleanup" argument is specified
 if [[ "$1" != "nocleanup" ]]; then
     rm -f ./*.tar.gz
 fi

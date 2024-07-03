@@ -15,7 +15,7 @@ wget -N https://zibada.guru/gcj/gcj-archive-2022.zip
 mkdir -p ./input/
 unzip '*.zip' -d ./input/
 
-# Execute rm commands only if "nocleanup" argument is specified
+# Skip rm commands only if "nocleanup" argument is specified
 if [[ "$1" != "nocleanup" ]]; then
     rm -f ./gcj-archive-*.zip
 fi

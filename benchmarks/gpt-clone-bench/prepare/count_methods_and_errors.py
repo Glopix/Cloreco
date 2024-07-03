@@ -80,5 +80,5 @@ if __name__ == "__main__":
     directoryPath = args.input
     count_methods_in_directory(directoryPath)
 
-# before addClasses.py: 17058
-# after  addClasses.py: 69
+# error count before addClasses.py: 17058
+# error count after  addClasses.py: 69

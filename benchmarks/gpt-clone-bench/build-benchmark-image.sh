@@ -30,9 +30,9 @@ mv standalone/true_semantic_clones/java/prompt_2/T4/*.java    input/tsc_p2_T4/
 
 rm -rf standalone
 
-# Execute rm commands only if "nocleanup" argument is specified
+# Skip rm commands if "nocleanup" argument is specified
 if [[ "$1" != "nocleanup" ]]; then
-    rm -f ./GPTCloneBench_semantic_standalone_clones.zip.zip
+    rm -f ./GPTCloneBench_semantic_standalone_clones.zip
 fi
 
 echo "add classes to files"
