@@ -30,6 +30,9 @@ ADD ./bcboutput ./bcboutput/
 # copy tokenizers/block-level/config.ini
 ADD ./tokenizers ./tokenizers
 
+# copy customized runnodes.sh script
+ADD ./clone-detector/runnodes.sh ./clone-detector/runnodes.sh
+
 # copy runner script
 ADD ./SourcerCC_Runner.sh ${app}/SourcerCC_Runner.sh
 RUN chmod +x ${app}/SourcerCC_Runner.sh
