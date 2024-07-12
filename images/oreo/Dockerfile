@@ -32,6 +32,9 @@ WORKDIR ${app}
 # fix error in old pandas import
 RUN sed -i "1s/^/import os\nos.environ.setdefault('PATH', '')\n/" ${app}/python_scripts/Predictor.py
 
+# copy customized runnodes.sh script
+ADD ./clone-detector/runnodes.sh ./clone-detector/runnodes.sh
+
 # copy runner script
 ADD ./oreoRunner.sh ${app}/oreoRunner.sh
 RUN chmod +x ${app}/oreoRunner.sh

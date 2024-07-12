@@ -14,14 +14,16 @@ logging_verbose = False
 
 [detector-argument-descriptions]
 METRICS_ORDER_IN_SHARDS = num_tokens,num_unique_tokens,num_statements,num_expressions,num_assignments
-IS_SHARDING = Sharding speeds up search for very large datasets (>200K files)
+IS_SHARDING = Sourcerer-CC: Sharding speeds up search for very large datasets (>200K files)
+
+SIMILARITY_THRESHOLD = Sourcerer-CC: similarity threshold. threshold=7 would mean we want to find clones that are 70% similar (Overlap similarity measured using Tokens).
 
 SEARCH_SHARDS = ALL
 
 # Tier 1 shards based on num tokens
-LEVEL_1_MIN_TOKENS = minimum number of Tokens
-LEVEL_1_MAX_TOKENS = maximum number of Tokens
-LEVEL_1_SHARD_MAX_NUM_TOKENS = max. number of Tokens for Sharding
+LEVEL_1_MIN_TOKENS = Sourcerer-CC: minimum number of Tokens
+LEVEL_1_MAX_TOKENS = Sourcerer-CC: maximum number of Tokens
+LEVEL_1_SHARD_MAX_NUM_TOKENS = Sourcerer-CC:  max. number of Tokens for Sharding. How many and in which range the shards will be created
 
 
 [detector-argument-defaults]
@@ -29,6 +31,8 @@ METRICS_ORDER_IN_SHARDS = num_tokens
 IS_SHARDING = true
 
 SEARCH_SHARDS = ALL
+
+SIMILARITY_THRESHOLD = 8
 
 # Tier 1 shards based on num tokens
 LEVEL_1_MIN_TOKENS=15
