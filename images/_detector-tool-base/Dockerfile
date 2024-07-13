@@ -4,8 +4,6 @@
 
 ARG DISTRO=ubuntu:latest
 
-##############################################################
-# second stage
 FROM ${DISTRO}
 ARG JDK_VERSION=openjdk-11-jdk
 
@@ -14,6 +12,8 @@ ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8
 
 WORKDIR /cloneDetection/
+
+# for test and debugging purposes, could be removed to reduce image size
 COPY --from=ghcr.io/glopix/cloreco-images/big-clone-eval-base /cloneDetection /cloneDetection
 
 # install dependencies
