@@ -1,4 +1,3 @@
-version: '3.10'
 services:
   nil:
     image: ghcr.io/glopix/cloreco-images/nil
@@ -15,6 +14,6 @@ services:
       # directory: final report from evaluateTool 
       - ../evaluation/:/cloneDetection/evaluation/
 
-      - /home/franzburock/klondetektoren-automatisierung/benchmark/gcj/:/cloneDetection/benchmark/
+      #- ../../benchmark/gcj/:/cloneDetection/benchmark/
     
     #entrypoint: /bin/bash -c "sleep 900000"
