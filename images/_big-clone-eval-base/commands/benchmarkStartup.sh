@@ -11,4 +11,11 @@ if [ -z "$CLONE_DETECTOR_TOOL_NAME" ]; then
     CLONE_DETECTOR_TOOL_NAME="clone detector tool"
 fi
 
-./registerTool --name="${CLONE_DETECTOR_TOOL_NAME}" --description="${CLONE_DETECTOR_TOOL_NAME}"
+# Construct the command
+cmd='./registerTool --name="'${CLONE_DETECTOR_TOOL_NAME}'" --description="'${CLONE_DETECTOR_TOOL_NAME}'"'
+
+# Print the command
+echo $cmd
+
+# Execute the command
+eval $cmd
