@@ -28,7 +28,7 @@ cp -r "${inputfolder}" "src/examples/${foldername}"
 ./scripts/clonedetect/deckard.sh    &>> $OUTPUT_TARGET    || exit 1
 
 cd bcboutput
-python3 main.py     2> $OUTPUT_TARGET    || exit 1
+python3 main.py     2>> $OUTPUT_TARGET    || exit 1
 
 # clean up
 cd ..
