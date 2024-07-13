@@ -40,6 +40,7 @@ if args.excluded_directories:
 # combination of OS distributions and JDK versions, 
 # used to build different detector-tool-base images (detector-tool-base:ubuntu:XX.04-jdkX)
 dist_jdks = [
+    {"distro" : 'ubuntu:22.04', "jdk" : 'openjdk-21-jdk'},
     {"distro" : 'ubuntu:22.04', "jdk" : 'openjdk-17-jdk'},
     {"distro" : 'ubuntu:22.04', "jdk" : 'openjdk-11-jdk'},
     {"distro" : 'ubuntu:22.04', "jdk" : 'openjdk-8-jdk'},
