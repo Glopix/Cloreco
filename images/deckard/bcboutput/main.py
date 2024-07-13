@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ
+from glob import glob
 
 if __name__ == "__main__":
     filterOutput = False
@@ -14,7 +15,8 @@ if __name__ == "__main__":
                 line = line.rstrip()
                 functionSet.add(line)
     
-    with open("../clusters/post_cluster_vdb_125_2_allg_0.70_50") as f:
+    postClusterFile = glob("../clusters/post_cluster*")[0]
+    with open(postClusterFile) as f:
         parts = []
         for line in f:
             if line == "\n":
