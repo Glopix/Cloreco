@@ -222,7 +222,7 @@ class BenchmarkRunner:
             else:
                 commandName = command
 
-        print(f"Start '{command}'", flush=True)
+        print(f"Start '{commandName}'", flush=True)
 
         # show complete command with all arguments
         print(*command, sep=' ', flush=True)
@@ -230,7 +230,7 @@ class BenchmarkRunner:
         # capture_output not set --> output to stdout of caller = to docker output
         subprocess.run(command, check=True, env=dict(environ, **env))
 
-        print(f"'{command}' finished", flush=True)
+        print(f"'{commandName}' finished", flush=True)
 
 
     def insert_lines(self, dst, newLines, lineNumber) -> None: 
