@@ -107,7 +107,7 @@ def read_benchmark_files(fromDir:str = None) -> list[dict]:
         }
         benchmarks.append(templateConfig)
     
-    # sort the list of dictionaries by the 'name' key
+    # sort the list of benchmarks/dictionaries by the 'name' key
     return sorted(benchmarks, key=lambda x: x['name'])
 
 def read_template_files(fromDir:str = None) -> list[dict]:
@@ -209,7 +209,8 @@ def read_template_files(fromDir:str = None) -> list[dict]:
             }
         )
     
-    return configFiles
+    # sort the list of clone detectors/dictionaries by the 'detectorName' key
+    return sorted(configFiles, key=lambda x: x['detectorName'])
 
 def read_description_and_defaults(file: str|ConfigParser, descriptionSection: str, defaultValueSection:str=None) -> list[dict]:
     """
