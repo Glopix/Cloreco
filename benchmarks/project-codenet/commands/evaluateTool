@@ -162,7 +162,7 @@ class Evaluator():
             "-- Tool --",
             f"Tool: 1 - {toolName}",
             f"Description: {toolName}",
-            f"#Clones: {self.totalClones}"
+            f"#Clones: {self.trueDetectedClones + self.falseDetectedClones}"
         ]
     
     def recall_statistics(self) -> List[str]:
