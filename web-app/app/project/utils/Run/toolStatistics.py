@@ -92,12 +92,42 @@ def extract_run_time(logFile: Path) -> float:
     return runtime
 
 
-def extract_statistic(lines: list) -> list[dict]:
+def extract_per_clone_type_statistic(lines: list[str]) -> list[dict]:
+    """
+    extract the main statistics (numDetected / numClones = recall) from a given line of a .report file
+    Extraction is terminated as soon as an empty line is encountered
+
+    e.g. input: 
+    [
+        '              Type-1: 20777 / 47146 = 0.44069486276672465', 
+        '              Type-2: 3474 / 4609 = 0.7537426773703624', 
+        '      Type-2 (blind): 242 / 386 = 0.6269430051813472', 
+        ' Type-2 (consistent): 3232 / 4223 = 0.765332701870708', 
+        'Very-Strongly Type-3: 3270 / 4163 = 0.7854912322844103', 
+        '     Strongly Type-3: 6526 / 16631 = 0.3923997354338284', 
+        '    Moderatly Type-3: 4152 / 83444 = 0.0497579214802742', 
+        'Weakly Type-3/Type-4: 2583 / 8219320 = 3.1425957378469267E-4',
+        ' ',
+        ' ignored'
+    ]
+
+    Returns:
+    [
+        {'Type': 'Type-1', 'numDetected': '20777', 'numClones': '47146', 'recall': '0.44069486276672465'}, 
+        {'Type': 'Type-2', 'numDetected': '3474', 'numClones': '4609', 'recall': '0.7537426773703624'}, 
+        {'Type': 'Type-2 (blind)', 'numDetected': '242', 'numClones': '386', 'recall': '0.6269430051813472'}, 
+        {'Type': 'Type-2 (consistent)', 'numDetected': '3232', 'numClones': '4223', 'recall': '0.765332701870708'}, 
+        {'Type': 'Very-Strongly Type-3', 'numDetected': '3270', 'numClones': '4163', 'recall': '0.7854912322844103'}, 
+        {'Type': 'Strongly Type-3', 'numDetected': '6526', 'numClones': '16631', 'recall': '0.3923997354338284'}, 
+        {'Type': 'Moderatly Type-3', 'numDetected': '4152', 'numClones': '83444', 'recall': '0.0497579214802742'}, 
+        {'Type': 'Weakly Type-3/Type-4', 'numDetected': '2583', 'numClones': '8219320', 'recall': '3.1425957378469267E-4'}
+    ]
+        """
     statistic = []
     for line in lines:
-        # empty line means we have reached the end of the current text block -> return collected values
+        # empty line means we have reached the end of the current text block -> break and return collected values
         if not line.strip():
-            return statistic
+            break
         
         # extract the values from the line, e.g.:
         # Type-1: 18358 / 47146 = 0.38938616213464555 
@@ -116,10 +146,14 @@ def extract_statistic(lines: list) -> list[dict]:
             'recall': recallPercent
         }
         statistic.append(data)
+    
+
+    return statistic
 
 def extract_statistics_from_file(reportFilePath: Path) -> list[dict]:
     """
-    extracts the tool name, runtime, total number of found clones and main statistics of multiple report files from BigCloneEval
+    extracts the tool name, runtime, total number of reported clones (true and false positives) 
+    and main statistics from a .report file 
     main statistics means the values of the following report part:
         ================================================================================
             All Functionalities
@@ -136,22 +170,10 @@ def extract_statistics_from_file(reportFilePath: Path) -> list[dict]:
 
     Returns:
     [
-        {
-            "cloneType":"Type-1",
-            "foundNumber":"20828",
-            "totalNumber":"47146",
-            "percent":"0.4417766088321385",
-            "name":"StoneDetector",
-            "TotalDetectedClones":"1031373"
-        },
-        {
-            "cloneType":"Type-2",
-            "foundNumber":"3475",
-            "totalNumber":"4609",
-            "percent":"0.7539596441744413",
-            "name":"StoneDetector",
-            "TotalDetectedClones":"1031373"
-        },
+        {'Type': 'Type-1', 'numDetected': '20777', 'numClones': '47146', 'recall': '0.44069486276672465', 'Name': 'StoneDetector', 'Runtime': '6719.07', 'TotalReportedClones (true and false positives)': '1030568'}, 
+        {'Type': 'Type-2', 'numDetected': '3474', 'numClones': '4609', 'recall': '0.7537426773703624', 'Name': 'StoneDetector', 'Runtime': '6719.07', 'TotalReportedClones (true and false positives)': '1030568'}, 
+        {'Type': 'Type-2 (blind)', 'numDetected': '242', 'numClones': '386', 'recall': '0.6269430051813472', 'Name': 'StoneDetector', 'Runtime': '6719.07', 'TotalReportedClones (true and false positives)': '1030568'}, 
+        {'Type': 'Type-2 (consistent)', 'numDetected': '3232', 'numClones': '4223', 'recall': '0.765332701870708', 'Name': 'StoneDetector', 'Runtime': '6719.07', 'TotalReportedClones (true and false positives)': '1030568'}, 
         ...
     ]
     """
@@ -174,26 +196,24 @@ def extract_statistics_from_file(reportFilePath: Path) -> list[dict]:
         # get tool name from parent directory
         toolName = reportFilePath.parent.name
 
-        # get total number of found clones
-        if "Clones:" in line:
-            totalClones = line.split(":")[1].strip()
+        # get total number of found clones (true and false positives included) 
+        if "#Clones:" in line:
+            totalReportedClones = line.split(":")[1].strip()
 
         if "Runtime (s) of detectClones:" in line:
             runtime = line.split(":")[1].strip()
 
         # get main statistic for each clone type
         if "-- Recall Per Clone Type (type: numDetected / numClones = recall) --" in line:
-            cloneStatistic = extract_statistic(lines[index+1:])
+            cloneStatistic = extract_per_clone_type_statistic(lines[index+1:])
             break
 
 
     for element in cloneStatistic:
         element['Name'] = toolName
         element['Runtime'] = runtime
-        element['TotalDetectedClones'] = totalClones
+        element['TotalReportedClones (true and false positives)'] = totalReportedClones
 
-    #print(cloneStatistic)
-    #exit()
     return cloneStatistic
 
 def extract_statistics_to_csv(runPath: str|Path, csvPath: Path) -> None:
@@ -218,7 +238,7 @@ def extract_statistics_to_csv(runPath: str|Path, csvPath: Path) -> None:
     # create a dataframe
     df = pd.DataFrame(totalStatistics)
     # and reorder the columns
-    columnOrder = ['Name', 'Runtime', 'TotalDetectedClones', 'Type', 'numDetected', 'numClones', 'recall']
+    columnOrder = ['Name', 'Runtime', 'TotalReportedClones (true and false positives)', 'Type', 'numDetected', 'numClones', 'recall']
     df = df[columnOrder]
 
     df.to_csv(csvPath, index=False)
