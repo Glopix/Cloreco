@@ -31,13 +31,15 @@ fi
 # Convert Detected Clones Into BigCloneEval Format
 #java -jar Convert.jar ${path}_functions-blind-abstract-clones/${dir}_functions-blind-abstract-clones-0.30.xml 2> $OUTPUT_TARGET
 
-cat "${path}"_*-clones/"${dir}"_*-clones-0.30.xml | \
+shopt -s extglob
+cat "${path}"_*-clones/"${dir}"_*-clones-*+([[:digit:]]).xml | \
     sed 's$<source file="$$g' | sed 's$" startline="$,$g' | sed 's$" endline="$,$g' | sed 's$" pcid=.*"></source>$$g' | \
     sed 's$<clone nlines=.*$$g' | sed 's$</clone>.*$$g' | sed 's$</clones>$$g' |sed 's$<clones>$$g' | \
     sed 's$<cloneinfo.*$$g' | sed 's$<systeminfo.*$$g' | sed 's$<runinfo.*$$g' | sed '/^$/d' | paste -d ',' - - | \
     sed "s#${path}/##g" | sed 's#/#,#g'
 
 # Cleanup
+rm -rf "${path}"_*-clones/                        &>> $OUTPUT_TARGET
 rm -rf "${path}"_functions-blind-abstract-clones  &>> $OUTPUT_TARGET
 rm "${path}"_functions-blind-abstract.xml         &>> $OUTPUT_TARGET
 rm "${path}"_functions-clones*.log                &>> $OUTPUT_TARGET
