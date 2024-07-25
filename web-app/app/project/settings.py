@@ -20,6 +20,8 @@ templateFiles = dict(
     descriptionSection  = 'detector-argument-descriptions',
     # Section in config files, where the default value of each config argument is set
     defaultValueSection = 'detector-argument-defaults',
+    # Section in config files, where general information is stored. like pretty name, description
+    generalSection      = 'general',
     # Section in config files, where the Container config is set
     containerSection    = 'container',
     # Section in config files, where the description or defaults of the global(same for all tools) Benchmark settings are stored

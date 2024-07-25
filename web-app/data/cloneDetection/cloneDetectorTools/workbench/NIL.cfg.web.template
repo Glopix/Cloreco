@@ -1,3 +1,7 @@
+[general]
+pretty_name = NIL
+description = Repo: <a href="https://github.com/kusumotolab/NIL">https://github.com/kusumotolab/NIL</a> <br>Paper: <a href="https://dl.acm.org/doi/10.1145/3468264.3468564">https://dl.acm.org/doi/10.1145/3468264.3468564</a>
+
 [container]
 image = ghcr.io/glopix/cloreco-images/nil:latest
 mountpoint_base = /cloneDetection/

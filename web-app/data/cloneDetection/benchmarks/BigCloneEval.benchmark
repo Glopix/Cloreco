@@ -1,5 +1,6 @@
 [general]
 pretty_name = Big Clone Eval
+description = <a href=https://github.com/jeffsvajlenko/BigCloneEval>https://github.com/jeffsvajlenko/BigCloneEval</a>
 
 [container]
 image = ghcr.io/glopix/cloreco-images/big-clone-eval-benchmark

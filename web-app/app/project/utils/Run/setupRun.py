@@ -129,31 +129,37 @@ class SetupRun():
             list of dicts,
             containing the names, pretty names and container configuration of each benchmark
             e.g:
-                [
-                    {
-                    'name'      : 'BigCloneEval',
-                    'prettyName': 'Big Clone Eval',
-                    'container' : {
-                                    'image' : 'ghcr.io/glopix/cloreco-images/big-clone-eval', 
-                                    'benchmark_path' : '/cloneDetection/benchmark/'
-                                },
+            [
+                {
+                    "name":"BigCloneEval",
+                    "general":{
+                        "pretty_name":"Big Clone Eval",
+                        "description": 'Repo: <a href="https://github.com/jeffsvajlenko/BigCloneEval">https://github.com/jeffsvajlenko/BigCloneEval</a>'
                     },
-                    {
-                    'name'      : 'GoogleCodeJam',
-                    'prettyName': 'Google Code Jam',
-                    'container' : {
-                                    'image' : 'ghcr.io/glopix/cloreco-images/google-code-jam', 
-                                    'benchmark_path' : '/cloneDetection/benchmark/'
-                                },
+                    "container":{
+                        "image":"ghcr.io/glopix/cloreco-images/big-clone-eval",
+                        "benchmark_path":"/cloneDetection/benchmark/"
                     }
-                ]
+                },
+                {
+                    "name":"GoogleCodeJam",
+                    "general":{
+                        "pretty_name":"Google Code Jam",
+                        "description": ''
+                    },
+                    "container":{
+                        "image":"ghcr.io/glopix/cloreco-images/google-code-jam",
+                        "benchmark_path":"/cloneDetection/benchmark/"
+                    }
+                }
+            ]
         """
         benchmarks = []
         for benchmark in self.benchmarks:
             benchmarks.append( 
                 {
                 'name'      : benchmark['name'],
-                'prettyName': benchmark['prettyName'],
+                'general'   : benchmark['general'],
                 'container' : benchmark['container'],
                 }
             )

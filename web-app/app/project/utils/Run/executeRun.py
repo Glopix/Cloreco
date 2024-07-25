@@ -140,7 +140,7 @@ class ExecuteRun(AbortableTask):
         if status in {'error', 'failure', 'aborted', 'finished'}:
             isExecuted = "False"
         elif status == 'running':
-            msg = f"{msg} (in {self.currentBenchmark['prettyName']})"
+            msg = f"{msg} (in {self.currentBenchmark['general']['pretty_name']})"
         
         progressUpdate = {
             "type"           : "container",
@@ -216,7 +216,7 @@ class ExecuteRun(AbortableTask):
         """
         benchmark = self.currentBenchmark 
 
-        self.send_progress_update(status="running", msg=f"preparing container for benchmark: '{benchmark['prettyName']}'")
+        self.send_progress_update(status="running", msg=f"preparing container for benchmark: '{benchmark['general']['pretty_name']}'")
 
         volume = self.currentBenchmark["volume"]
 
@@ -236,8 +236,8 @@ class ExecuteRun(AbortableTask):
             'auto_remove'       : True  # remove container after it has been stopped
         }
 
-        self.send_progress_update(status="running", msg=f"start benchmark container for benchmark: '{benchmark['prettyName']}'")
-        self.log.trace(f"start benchmark container for benchmark: '{benchmark['prettyName']}'")
+        self.send_progress_update(status="running", msg=f"start benchmark container for benchmark: '{benchmark['general']['pretty_name']}'")
+        self.log.trace(f"start benchmark container for benchmark: '{benchmark['general']['pretty_name']}'")
         self.log.trace(f"This might take a while, since the entire benchmark dataset is copied into a volume")
 
         # Create and start the container
@@ -640,7 +640,7 @@ class ExecuteRun(AbortableTask):
         try:
             for benchmark in self.benchmarks:
                 self.currentBenchmark = benchmark
-                self.log.info(f"Executing in benchmark: {self.currentBenchmark['prettyName']}")
+                self.log.info(f"Executing in benchmark: {self.currentBenchmark['general']['pretty_name']}")
 
                 self.run_containers()
             

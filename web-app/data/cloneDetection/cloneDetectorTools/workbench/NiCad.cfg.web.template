@@ -1,3 +1,7 @@
+[general]
+pretty_name = NiCad
+description = Repo: <a href="https://www.txl.ca/txl-nicaddownload.html">https://www.txl.ca/txl-nicaddownload.html</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/5970189">https://ieeexplore.ieee.org/document/5970189</a>
+
 [container]
 image = ghcr.io/glopix/cloreco-images/nicad
 mountpoint_base = /cloneDetection/

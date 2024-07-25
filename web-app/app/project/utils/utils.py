@@ -19,64 +19,70 @@ def read_benchmark_files(fromDir:str = None) -> list[dict]:
         - container configuration
 
     Returns:
-        a list of dicts, containing these informations
-        e.g.:
-            [
+    a list of dicts, containing these informations
+    e.g.:
+    [
+        {
+            "name":"BigCloneEval",
+            "filename":"BigCloneEval.benchmark",
+            "filepath":"/app/data/cloneDetection/benchmarks/BigCloneEval.benchmark",
+            "general": {
+                "pretty_name": 'Big Clone Eval', 
+                "description": 'Repo: <a href="https://github.com/jeffsvajlenko/BigCloneEval">https://github.com/jeffsvajlenko/BigCloneEval</a>'
+            },
+            "detectClonesArguments":[
                 {
-                    "name":"BigCloneEval",
-                    "filename":"BigCloneEval.benchmark",
-                    "prettyName":"Big Clone Eval",
-                    "filepath":"/app/data/cloneDetection/benchmarks/BigCloneEval.benchmark",
-                    "detectClonesArguments":[
-                        {
-                            "name":"bcb_parts",
-                            "description":"Which parts of the BigCloneBench (IJaDataset) clone database will be used <br> Valid values: 1-45, \"all\" (default);   seperate multiple values by \\',\\',   ranges by \\'-\\' <br> e.g.:  1, 2, 6-11",
-                            "default":"all"
-                        }
-                    ],
-                    "evaluateToolArguments":[
-                        {
-                            "name":"minimum-judges",
-                            "description":"Minimum number of judges.",
-                            "default":""
-                        },
-                        {
-                            "name":"matcher",
-                            "description":"Specify the clone matcher. See documentation for configuration strings. Default is coverage-matcher with 70% coverage threshold.",
-                            "default":"CoverageMatcher 0.7"
-                        },
-                        ...
-                    ],
-                    "container":{
-                        "image":"ghcr.io/glopix/cloreco-images/big-clone-eval",
-                        "benchmark_path":"/cloneDetection/benchmark/"
-                    }
+                    "name":"bcb_parts",
+                    "description":"Which parts of the BigCloneBench (IJaDataset) clone database will be used <br> Valid values: 1-45, \"all\" (default);   seperate multiple values by \\',\\',   ranges by \\'-\\' <br> e.g.:  1, 2, 6-11",
+                    "default":"all"
+                }
+            ],
+            "evaluateToolArguments":[
+                {
+                    "name":"minimum-judges",
+                    "description":"Minimum number of judges.",
+                    "default":""
                 },
                 {
-                    "name":"GoogleCodeJam",
-                    "filename":"GoogleCodeJam.benchmark",
-                    "prettyName":"Google Code Jam",
-                    "filepath":"/app/data/cloneDetection/benchmarks/GoogleCodeJam.benchmark",
-                    "detectClonesArguments":[
-                        ...
-                    ],
-                    "evaluateToolArguments":[
-                        ...
-                    ],
-                    "container":{
-                        "image":"ghcr.io/glopix/cloreco-images/google-code-jam",
-                        "benchmark_path":"/cloneDetection/benchmark/"
-                    }
-                }
-            ]
+                    "name":"matcher",
+                    "description":"Specify the clone matcher. See documentation for configuration strings. Default is coverage-matcher with 70% coverage threshold.",
+                    "default":"CoverageMatcher 0.7"
+                },
+                ...
+            ],
+            "container":{
+                "image":"ghcr.io/glopix/cloreco-images/big-clone-eval",
+                "benchmark_path":"/cloneDetection/benchmark/"
+            }
+        },
+        {
+            "name":"GoogleCodeJam",
+            "filename":"GoogleCodeJam.benchmark",
+            "filepath":"/app/data/cloneDetection/benchmarks/GoogleCodeJam.benchmark",
+            "general": {
+                ...
+            },
+            "detectClonesArguments":[
+                ...
+            ],
+            "evaluateToolArguments":[
+                ...
+            ],
+            "container":{
+                "image":"ghcr.io/glopix/cloreco-images/google-code-jam",
+                "benchmark_path":"/cloneDetection/benchmark/"
+            }
+        }
+    ]
     """
     if fromDir:
         dir = Path(fromDir)
     else:
         dir = Path(settings.directories["benchmarks"])
 
-    fileExtension = settings.benchmarks["fileExtension"]
+    fileExtension    = settings.benchmarks["fileExtension"]
     containerSection = settings.benchmarks["containerSection"]
+    generalSection   = settings.benchmarks["generalSection"]
 
     benchmarks = []
     
@@ -84,23 +90,28 @@ def read_benchmark_files(fromDir:str = None) -> list[dict]:
     for benchmarkFile in dir.glob(f"*{fileExtension}"):
         if benchmarkFile.is_dir(): continue
 
-        detectClonesArguments = read_description_and_defaults(benchmarkFile, settings.benchmarks['detectClonesDescriptions'], settings.benchmarks['detectClonesDefaults'])
-        evaluateToolArguments = read_description_and_defaults(benchmarkFile, settings.benchmarks['evaluateToolDescriptions'], settings.benchmarks['evaluateToolDefaults'])
-        
-        configFile = cp.read_cp_config_file(benchmarkFile)
-        container  = dict(configFile[containerSection])
-
         # remove all whitespaces in file name, without suffix
         # e.g. 'big cloneEval.benchmark' -> bigcloneEval
         name = benchmarkFile.stem.strip(" ").strip()
 
-        prettyName = configFile.get(settings.benchmarks["generalSection"], "pretty_name", fallback=name)
+        detectClonesArguments = read_description_and_defaults(benchmarkFile, settings.benchmarks['detectClonesDescriptions'], settings.benchmarks['detectClonesDefaults'])
+        evaluateToolArguments = read_description_and_defaults(benchmarkFile, settings.benchmarks['evaluateToolDescriptions'], settings.benchmarks['evaluateToolDefaults'])
+        
+        configFile = cp.read_cp_config_file(benchmarkFile)
+        if configFile.has_section(generalSection):
+            general = dict(configFile[generalSection])
+        else: 
+            general = {
+                "pretty_name" : name,
+                "description" : ""
+            }
+        container  = dict(configFile[containerSection])
 
         templateConfig = {
             'name'          : name,
             'filename'      : benchmarkFile.name,
-            'prettyName'    : prettyName,
             'filepath'      : str(benchmarkFile.resolve()),
+            'general'       : general,
             'detectClonesArguments' : detectClonesArguments,
             'evaluateToolArguments' : evaluateToolArguments,
             'container'     : container,
@@ -122,6 +133,10 @@ def read_template_files(fromDir:str = None) -> list[dict]:
             "filename": "NiCad.cfg.web.template",
             "baseFilename": "NiCad.cfg.template",
             "detectorName": "NiCad",
+            "general": {
+                "pretty_name": 'NiCad', 
+                "description": 'Repo: <a href="https://www.txl.ca/txl-nicaddownload.html">https://www.txl.ca/txl-nicaddownload.html</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/5970189">https://ieeexplore.ieee.org/document/5970189</a>'
+            },
             "container": {
                 "image": "NiCad",
                 "mountpoint_base": "/cloneDetection/",
@@ -130,29 +145,22 @@ def read_template_files(fromDir:str = None) -> list[dict]:
             },
             "arguments": 
             [
-                {
-                    "name": "var1",
-                    "description": "Description of variable1",
-                    "default": "True",
-                },
-                {
-                    "name": "var2",
-                    "description": "Description of variable2",
-                    "default": "dfs",
-                },
-                {
-                    "name": "var3",
-                    "description": "Description of variable3",
-                    "default": "2342",
-                },
+                { "name": "var1", "description": "Description of variable1", "default": "True" },
+                { "name": "var2", "description": "Description of variable2", "default": "dfs" },
+                { "name": "var3", "description": "Description of variable3", "default": "2342" },
             ],
-            "benchmarkCfgFilename" : "entrypoint.cfg",
+            "benchmarkCfgFilename": "entrypoint.cfg",
             "benchmarkArguments": 
             [
                 {
                     "name": "max_files",
                     "description": "Maximum amount of files",
                     "default": "100000",
+                },
+                {
+                    "name": "logging_verbose",
+                    "description": "Save stdout and stderr of the detector tool in a log file?",
+                    "default": "False"
                 }
             ],
         },
@@ -160,6 +168,10 @@ def read_template_files(fromDir:str = None) -> list[dict]:
             "filename": "Tool2.cfg.web.template",
             "baseFilename": "Tool2.cfg.template",
             "detectorName": "Tool2",
+            "general": {
+                "pretty_name": 'Tool 2', 
+                "description": 'this is Tool 2'
+            },
             "container": {
                 "image": "Tool2",
                 "mountpoint_detector_config": "/cloneDetection/Applications/Tool2/confdir/default.cfg",
@@ -178,6 +190,10 @@ def read_template_files(fromDir:str = None) -> list[dict]:
                     "name": "max_files",
                     "description": "Maximum amount of files",
                     "default": "20000",
+                {
+                    "name": "logging_verbose",
+                    "description": "Save stdout and stderr of the detector tool in a log file?",
+                    "default": "False"
                 }
             ],
         },
@@ -197,11 +213,18 @@ def read_template_files(fromDir:str = None) -> list[dict]:
         detectorName = file.name.split(fileExtensionWebCfg, 1)[0]
         baseFile = Path(f"{detectorName}{settings.templateFiles['fileExtensionBase']}")
 
+        if not config['general']:
+            config['general'] = {
+                "pretty_name" : detectorName,
+                "description" : ""
+            }
+
         configFiles.append(
             {
                 'filename'             : file.name,
                 'baseFilename'         : baseFile.name,
                 'detectorName'         : detectorName,
+                'general'              : config['general'],
                 'container'            : config['container'],
                 'arguments'            : config['arguments'],
                 'benchmarkCfgFilename' : settings.benchmarks['configFileName'],
@@ -269,6 +292,10 @@ def read_template_file(file: str) -> dict[dict]:
         a nested dict
     e.g:
     {
+        "general": {
+            "pretty_name": 'NiCad', 
+            "description": 'Repo: <a href="https://www.txl.ca/txl-nicaddownload.html">https://www.txl.ca/txl-nicaddownload.html</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/5970189">https://ieeexplore.ieee.org/document/5970189</a>'
+        },
         "container": {
             "image": "NiCad",
             "mountpoint_base": "/cloneDetection/",
@@ -291,12 +318,17 @@ def read_template_file(file: str) -> dict[dict]:
     """
     configFile = cp.read_cp_config_file(file)
 
+    generalSection          = settings.templateFiles['generalSection']
     containerSection        = settings.templateFiles['containerSection']
     descriptionSection      = settings.templateFiles['descriptionSection']
     defaultValueSection     = settings.templateFiles['defaultValueSection']
     benchmarkDescriptionSection   = settings.templateFiles['benchmarkDescriptionSection']
     benchmarkDefaultValueSection  = settings.templateFiles['benchmarkDefaultValueSection']
     
+    if configFile.has_section(generalSection):
+        general = dict(configFile[generalSection])
+    else: 
+        general = dict()
     container        = dict(configFile[containerSection])
     arguments        = read_description_and_defaults(configFile, descriptionSection, defaultValueSection)
     benchmarkConfig  = read_description_and_defaults(configFile, benchmarkDescriptionSection, benchmarkDefaultValueSection)
@@ -306,6 +338,7 @@ def read_template_file(file: str) -> dict[dict]:
         raise ValueError(f"Error in {file}: At least one required value in the [{containerSection}] section is empty or contains only whitespaces.")
 
     config = {
+        'general'   : general,
         'container' : container,
         'arguments' : arguments,
         'benchmarkArguments': benchmarkConfig

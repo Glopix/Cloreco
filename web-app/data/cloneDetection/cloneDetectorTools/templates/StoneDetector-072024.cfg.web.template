@@ -1,9 +1,9 @@
 [general]
-pretty_name = StoneDetector
-description = Repo: <a href="https://github.com/StoneDetector/StoneDetector">https://github.com/StoneDetector/StoneDetector</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/9609181">https://ieeexplore.ieee.org/document/9609181</a>
+pretty_name = StoneDetector 072024
+description = StoneDetector from gitlab.com/t.heinze/dominator4java, branch: publish, Version Jul 2024, last commit: April 20, 2024 at 8:25:21 PM GMT+2 <br>Repo: <a href="https://gitlab.com/t.heinze/dominator4java/-/tree/publish">https://gitlab.com/t.heinze/dominator4java/-/tree/publish</a>
 
 [container]
-image = ghcr.io/glopix/cloreco-images/stone-detector
+image = ghcr.io/glopix/cloreco-images/stone-detector-072024
 mountpoint_base = /cloneDetection/
 mountpoint_detector_config = /cloneDetection/Applications/StoneDetector/config/default.properties 
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg

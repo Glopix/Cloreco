@@ -40,12 +40,15 @@
     <div class="accordion benchmark">
         <div class="accordion-header">
             <span><!-- empty span, to move the Benchmark name to the middle --></span>
-            {{ benchmark.prettyName }}
+            {{ benchmark.general.pretty_name }}
             <div class="tool-menu">
                 <input type="checkbox" class="tool-checkbox pure-checkbox" name="{{ benchmark.filename }}--selected">
             </div>
         </div>
         <div class="accordion-content">
+            <p>
+                {{ benchmark.general.description | safe }}
+            </p>
             <fieldset>
                 <legend>detectTool</legend>
                 <div class="pure-g">
@@ -84,7 +87,7 @@
     {% for detector in detectorsTemplates %}
     <div class="accordion">
         <div class="accordion-header">
-            {{ detector.detectorName }}
+            {{ detector.general.pretty_name }}
             <div class="tool-menu">
                 <button class="copy-tool" type="button" onclick="copyToolRequest('{{ detector.filename }}')">
                     <i title="duplicate this detector tool" class="fa-regular fa-copy fa-lg"></i>
@@ -93,7 +96,11 @@
             </div>
         </div>
         <div class="accordion-content">
+            <p>
+                {{ detector.general.description | safe }}
+            </p>
             <fieldset>
+                <legend>Options and arguments of {{ detector.detectorName }}</legend>
                 <div class="pure-g">
                     {% for argument in detector["arguments"] %}
                     <div class="pure-u-1 pure-u-md-1-2 argument">

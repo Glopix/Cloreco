@@ -1,5 +1,6 @@
 [general]
 pretty_name = Project CodeNet
+description = <a href=https://github.com/Glopix/Cloreco/tree/main/benchmarks/project-codenet>https://github.com/Glopix/Cloreco/tree/main/benchmarks/project-codenet</a>
 
 [container]
 image = ghcr.io/glopix/cloreco-images/project-codenet-benchmark:latest

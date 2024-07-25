@@ -1,5 +1,6 @@
 [general]
 pretty_name = Google Code Jam
+description = <a href=https://github.com/Glopix/Cloreco/tree/main/benchmarks/google-code-jam>https://github.com/Glopix/Cloreco/tree/main/benchmarks/google-code-jam</a>
 
 [container]
 image = ghcr.io/glopix/cloreco-images/google-code-jam-benchmark:latest

@@ -1,3 +1,7 @@
+[general]
+pretty_name = SourcererCC
+description = Repo: <a href="https://github.com/Mondego/SourcererCC">https://github.com/Mondego/SourcererCC</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/7886988">https://ieeexplore.ieee.org/document/7886988</a>
+
 [container]
 image = ghcr.io/glopix/cloreco-images/sourcerer-cc
 mountpoint_base = /cloneDetection/

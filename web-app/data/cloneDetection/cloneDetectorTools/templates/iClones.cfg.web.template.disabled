@@ -1,3 +1,7 @@
+[general]
+pretty_name = iClones
+description = Warning: disabled by default, since it's repo/website is not avaliable <br>Repo: <a href="www.softwareclones.org">www.softwareclones.org (Domainwassold)</a>
+
 [container]
 image = ghcr.io/glopix/cloreco-images/iclones:latest
 mountpoint_base = /cloneDetection/

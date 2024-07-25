@@ -1,3 +1,7 @@
+[general]
+pretty_name = Deckard
+description = Repo: <a href="https://github.com/skyhover/Deckard">https://github.com/skyhover/Deckard</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/4222572">https://ieeexplore.ieee.org/document/4222572</a>
+
 [container]
 image = ghcr.io/glopix/cloreco-images/deckard:latest
 mountpoint_base = /cloneDetection/

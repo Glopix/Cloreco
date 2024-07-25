@@ -1,5 +1,6 @@
 [general]
 pretty_name = GPTCloneBench
+description = <a href=https://github.com/Glopix/Cloreco/tree/main/benchmarks/gpt-clone-bench>https://github.com/Glopix/Cloreco/tree/main/benchmarks/gpt-clone-bench</a>
 
 [container]
 image = ghcr.io/glopix/cloreco-images/gpt-clone-bench-benchmark

@@ -1,3 +1,7 @@
+[general]
+pretty_name = StoneDetector
+description = Repo: <a href="https://github.com/StoneDetector/StoneDetector">https://github.com/StoneDetector/StoneDetector</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/9609181">https://ieeexplore.ieee.org/document/9609181</a>
+
 [container]
 image = ghcr.io/glopix/cloreco-images/stone-detector
 mountpoint_base = /cloneDetection/
