@@ -31,6 +31,7 @@
         </div>
         </form>
     {% endif %}
+
     <div class="file-browser">
         <table class="pure-table">
             <!-- show current directory path -->
@@ -87,21 +88,24 @@
 
     {% if diagrams %}
         <h2>Diagrams</h2>
-
+        <h3>Recall: interactive diagram</h3>
         <!-- interactive bar chart using plotly.js (via bar-plot.js file) -->
         <div class="diagram">
             <div id="recallPlot"></div>
             <div id="cloneTypeSelectors"></div>
         </div>
 
+        <h3>summary.csv Table</h3>
         <!-- interactive table using grid.js -->
         <div id="grid-table" class="diagram" alt="Table of summary data"></div>
         
+        <h3>Recall and runtime: diagram files</h3>
+        <!-- pre-rendered diagram files in this directory -->
         {% for diagram in diagrams %}
         <div class="diagram">
             <img src="/downloads/{{ diagram }}" alt="Diagram">
         </div>
-        {% endfor %}
+    {% endfor %}
 
     {% endif %}
 </div>
