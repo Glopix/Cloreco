@@ -26,6 +26,13 @@ import math
 # which is not natively supported in these versions without the `typing` module.
 from typing import List
 
+
+def printf(msg:str):
+    """
+    Ensure all messages are immediately shown by flushing the output buffer on every print
+    """
+    print(msg,flush=True)
+
 def parse_args() -> argparse.Namespace:
     """
     Parses command line arguments.
