@@ -94,6 +94,7 @@
             <div id="cloneTypeSelectors"></div>
         </div>
 
+        <!-- interactive table using grid.js -->
         <div id="grid-table" class="diagram" alt="Table of summary data"></div>
         
         {% for diagram in diagrams %}
@@ -136,12 +137,20 @@
     });
 }
 
-
+/**
+ * prepare and render the interactive table using grid.js 
+**/
 const { Grid } = gridjs;
 
+// Extract column names from the first object/header in summaryData ( summary.csv )
+const columns = Object.keys(summaryData[0]);
+
+// Prepare the data for Grid.js
+const data = summaryData.map(item => columns.map(column => item[column]));
+
 new Grid({
-  columns: ["Name", "Runtime", "TotalDetectedClones", "Type", "numClones", "numDetected", "recall"],
-  data: summaryData.map(item => [item.Name, item.Runtime, item.TotalDetectedClones, item.Type, item.numClones, item.numDetected, item.recall]),
+  columns: columns,
+  data: data,
   search: true,
   sort: true,
   pagination: {
