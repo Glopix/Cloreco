@@ -24,7 +24,7 @@ fi
 CONF_FILE="NIL.config"
 # Read config values  from the config file
 if [[ -f "$CONF_FILE" ]]; then
-    source "${MAIN_DIR}/$CONF_FILE"
+    source "${MAIN_DIR}/${CONF_FILE}"
 else
     echo "config file not found."
     echo "config file not found." >> $OUTPUT_TARGET
