@@ -1,5 +1,5 @@
 # iClones
-# docker build . -t ghcr.io/glopix/cloreco-images/iclones:latest --build-arg GITLAB_ACCESS_TOKEN=XXXXX
+# docker build . -t ghcr.io/glopix/cloreco-images/iclones:latest
 
 # Important:
 # The domain on which iClones was provided (www.softwareclones.org) is no longer available.
