@@ -64,6 +64,14 @@ def reset_workbench():
     return redirect("/run")
 
 
+# restore the default template, workbench and benchmarks directories from the /app/data_default/ directory
+# like on the first start up
+@main.route('/run/factory_reset_tools', methods=['GET'])
+def factory_reset_tools():
+    Run.factory_reset_tools()
+    return redirect("/run")
+
+
 ############
 # "add tool" pages:
 # add a new clone detector tool to the webinterface

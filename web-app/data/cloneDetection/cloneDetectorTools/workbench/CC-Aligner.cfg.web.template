@@ -2,8 +2,6 @@
 pretty_name = CCAligner
 description = Repo: <a href="https://github.com/PCWcn/CCAligner">https://github.com/PCWcn/CCAligner</a> <br>Paper: <a href="https://ieeexplore.ieee.org/document/8453188">https://ieeexplore.ieee.org/document/8453188</a>
 
-
-
 [container]
 image = ghcr.io/glopix/cloreco-images/cc-aligner
 mountpoint_base = /cloneDetection/

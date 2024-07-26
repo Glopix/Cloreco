@@ -19,6 +19,15 @@
                 reset all tools
             </a>
         </li>
+        <li class="pure-menu-item" title="reset all tools and benchmarks">
+            <a href="{{ url_for('main.factory_reset_tools') }}" class="pure-menu-link white-link" 
+            onclick="return confirm(`Warning! This action will reset and override all clone detector tools and benchmarks.
+                \n-All changes in the configuration files will be reverted.
+                \n-Custom added tool and benchmark files will remain, as long as they dont confilct with the default files`)">
+                <i class="fa-solid fa-trash-can-arrow-up fa-xl"></i> 
+                factory reset
+            </a>
+        </li>
     </ul>
 </div>
 
@@ -100,7 +109,7 @@
                 {{ detector.general.description | safe }}
             </p>
             <fieldset>
-                <legend>Options and arguments of {{ detector.detectorName }}</legend>
+                <legend>Options and arguments of {{ detector.general.pretty_name }}</legend>
                 <div class="pure-g">
                     {% for argument in detector["arguments"] %}
                     <div class="pure-u-1 pure-u-md-1-2 argument">

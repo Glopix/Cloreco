@@ -15,7 +15,7 @@ import docker, docker.errors
 from project.utils import utils
 from project.utils.configure import configure_redis
 
-def check_data_directory() -> None:
+def check_and_initialize_data_directory(override:bool = False) -> None:
     """
     Verifies and prepares the data directory at application startup.
 
@@ -33,8 +33,10 @@ def check_data_directory() -> None:
     confWorkbenchDir = Path(settings.directories['confWorkbench'])
 
     # copy the default /app/data_default directory to /app/data, if the former directories do not exist
-    if not benchmarkDir.exists() or not confTemplatesDir.exists() or not confWorkbenchDir.exists():
-        print("The data directory at /app/data/ is empty or is missing directories. Initializing the data environment by copying the default directory structure...")
+    if not benchmarkDir.exists() or not confTemplatesDir.exists() or not confWorkbenchDir.exists() or override:
+        if not override:
+            print("The data directory at /app/data/ is empty or is missing directories.")
+            print("Initializing the data environment by copying the default directory structure...")
 
         dataDir = Path("/app/data/")
         dataDefaultDir = Path("/app/data_default/")
@@ -43,7 +45,7 @@ def check_data_directory() -> None:
             if file.is_dir():
                 dst.mkdir(parents=True, exist_ok=True)
             else:
-                if not dst.exists():
+                if not dst.exists() or override:
                     copy2(file, dst)
 
 
@@ -70,8 +72,6 @@ def validate_config_templates() -> None:
 
     ##### Step 2: Ensure there are config files in the workbench directory. if not, copy the files from the templates directory
     confDir = settings.directories["confWorkbench"]
-
-    #bceFile = f"{confDir}/{settings.BigCloneEval['templateFileName']}"
 
     descriptionSection = settings.templateFiles['descriptionSection']
     defaultValueSection = settings.templateFiles['defaultValueSection']

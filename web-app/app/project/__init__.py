@@ -3,7 +3,7 @@ from flask_sse import sse
 from celery import Celery, Task
 import os
 from project.views import main
-from project.utils.startup import validate_config_templates, check_data_directory
+from project.utils.startup import validate_config_templates, check_and_initialize_data_directory
 
 
 def celery_init_app(app: Flask) -> Celery:
@@ -40,7 +40,7 @@ def create_app() -> Flask:
     app.register_blueprint(main)
     app.register_blueprint(sse, url_prefix='/stream')
 
-    check_data_directory()
+    check_and_initialize_data_directory()
     validate_config_templates()
 
     return app
