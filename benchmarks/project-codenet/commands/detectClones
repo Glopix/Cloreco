@@ -27,11 +27,11 @@ import math
 from typing import List
 
 
-def printf(msg:str):
+def printf(*args, **kwargs) -> None:
     """
     Ensure all messages are immediately shown by flushing the output buffer on every print
     """
-    print(msg,flush=True)
+    print(*args, **kwargs, flush=True)
 
 def parse_args() -> argparse.Namespace:
     """
