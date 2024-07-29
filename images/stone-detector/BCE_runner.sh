@@ -10,4 +10,4 @@ fi
 
 
 cd "$(dirname $0)"
-java -Xms8G -Xmx8G -jar build/libs/StoneDetector.jar -x --directory="$1" --error-file=$OUTPUT_TARGET    2>> $OUTPUT_TARGET
+java -Xms8G -XX:MaxRAMPercentage=80 -jar build/libs/StoneDetector.jar -x --directory="$1" --error-file=$OUTPUT_TARGET    2>> $OUTPUT_TARGET
