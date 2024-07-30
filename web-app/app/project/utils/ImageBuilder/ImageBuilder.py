@@ -42,8 +42,16 @@ class ImageBuilder(AbortableTask):
 
         self.redis = configure_redis()
 
+        # The container image registry must be set via the environment variable 'CONTAINER_REGISTRY_REPOSITORY'.
+        # If this variable is not set, no images will be pushed to a registry, and all created images will be stored locally only.
         self.imageRepo     = self.redis.get('container_registry.repository')
-        self.imageFullTag  = f"{self.imageRepo.rstrip('/')}/{self.imageTag}"
+        self.imageFullTag  = self.imageTag
+
+        if self.imageRepo:
+            # prepend the image repo to the tag
+            self.imageFullTag   = f"{self.imageRepo.rstrip('/')}/{self.imageFullTag}"
+        else:
+            self.imageRepo      = "local"
 
         self.currentAppContext = current_app.app_context()
         self.myDir = Path(__file__).parent.absolute()
@@ -153,40 +161,6 @@ class ImageBuilder(AbortableTask):
         self.logFile = Path(settings.directories["runs"]) / "ImageBuild" / "imageBuild.log"
         self.logFile.unlink(missing_ok=True)
         self.log.add(self.logFile, format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}", level="TRACE")
-
-        
-    def extract_install_config(self) -> dict:
-        """
-        Extracts configuration from the 'install.cfg' file located in a specified Git repository (self.gitRepoURL).
-
-        Returns:
-            A dictionary containing key-value pairs extracted from 'install.cfg'.
-        """
-        self.log.info(f"fetching 'install.cfg' from git repository '{self.gitRepoURL}' ")
-
-        # TODO: handle github.com, other branches than main
-        installCfgURL = f"{self.gitRepoURL}-/raw/main/install.cfg"
-
-        # Make a GET request to fetch the raw file content
-        response = requests.get(installCfgURL)
-
-        if response.status_code != 200:
-            self.log.error("Failed to retrieve the file")
-            raise Exception("Failed to retrieve the file")
-
-        installConfig = dict()
-
-        # process each line of the file content
-        for line in response.text.split('\n'):
-            # Extract key-value pairs from lines that resemble a variable assignment
-            # (i.e., lines starting with a letter and containing an '=' character)
-            if '=' in line and line.strip()[0].isalpha():
-                key, value = line.split('=', 1)
-                installConfig[key.strip()] = value.strip()
-
-        self.log.info(f"fetched 'install.cfg' from git repository '{self.gitRepoURL}' ")
-
-        return installConfig
 
 
     def get_build_args(self) -> dict:
@@ -353,51 +327,4 @@ class ImageBuilder(AbortableTask):
         self.final()
 
 
-"""
-def get_host_data_path():
-
-    import socket
-    # TODO: get host path to this file
-
-    # Connect to the Docker daemon
-    client = docker.from_env()
-
-    def get_container_mounts(containerID):
-        try:
-            container = client.containers.get(containerID)
-            mounts = container.attrs['Mounts']
-            return mounts
-        except docker.errors.NotFound:
-            print("Container not found.")
-
-    containerID = socket.gethostname()
-
-    container_mounts = get_container_mounts(containerID)
-    for mount in container_mounts:
-        #TODO:
-        if "/app/data" in mount['Destination']: 
-            print("Source:", mount['Source'])
-            return mount['Source']
-        
-def get_host_project_path():
-    
-    import socket
-    # TODO: get host path to this file
-
-    # Connect to the Docker daemon
-    client = docker.from_env()
-
-    def get_container_pid(containerID):
-        try:
-            container = client.containers.get(containerID)
-            pid = container.attrs['State']['Pid']
-            return pid
-        except docker.errors.NotFound:
-            print("Container not found.")
-
-    containerID = socket.gethostname()
-    containerPID = get_container_pid(containerID)
-    
-    return f"/proc/{containerPID}/cwd/project/"
-"""
 
