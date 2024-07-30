@@ -251,7 +251,8 @@ class ImageBuilder(AbortableTask):
         image = self.dockerClient.images.get(self.imageTag)
         image.tag(self.imageFullTag)
         # remove old temporary tag
-        self.dockerClient.images.remove(self.imageTag)
+        if self.imageTag != self.imageFullTag:
+            self.dockerClient.images.remove(self.imageTag)
 
         self.log.info(f"image build completed")
 
