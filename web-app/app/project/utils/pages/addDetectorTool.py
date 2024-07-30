@@ -87,12 +87,10 @@ def add_arguments_to_template(toolName: str, formData) -> dict:
     # 1) arguments of the tool
     toolFile = Path(settings.directories['confTemplates']) / f"{toolName}{settings.templateFiles['fileExtensionWebEdit']}"
     copy2(settings.templateFiles['newToolTemplate'], toolFile)
-    _update_config_with_form_data(toolFile, formData)
+    _update_config_with_form_data(toolFile, toolName, formData)
 
     # 2) # arguments of BCE
-    toolFile = Path(settings.directories['confTemplates']).joinpath(
-        f"{toolName}{settings.templateFiles['fileExtensionBase']}"
-    )
+    toolFile = Path(settings.directories['confTemplates']) / f"{toolName}{settings.templateFiles['fileExtensionBase']}"
     # if a config file was uploaded, save it and override values in it, based on the DefaultValue form inputs
     if config_file_was_uploaded(formData):
         if save_uploaded_file(formData, toolFile) == "error":
@@ -163,20 +161,23 @@ def _extract_template_container_data(formData) -> dict:
     return toolInformation
 
 
-def _update_config_with_form_data(toolFile: Path, formData) -> None:
+def _update_config_with_form_data(toolFile: Path, toolName:str, formData) -> None:
     """
     Update the tool configuration template file with form data for the container, descriptions and default values sections.
     """
-    # [container]
+    # [general] section
+    cp.update_config(toolFile, settings.templateFiles['generalSection'], {"pretty_name": toolName })
+
+    # [container] section
     toolInformation = _extract_template_container_data(formData)
     cp.update_config(toolFile, settings.templateFiles['containerSection'], toolInformation)
 
-    # [detector-argument-descriptions]
+    # [detector-argument-descriptions] section
     descriptionArguments = {d['Name']: d['Description'] for d in formData.toolArgs.data}
     descriptionArguments = {key: value.replace("\r\n", "<br>").replace("\n", "<br>") for key, value in descriptionArguments.items()}
     cp.update_config(toolFile, settings.templateFiles['descriptionSection'], descriptionArguments)
     
-    # [detector-argument-defaults]
+    # [detector-argument-defaults] section
     defaultArguments = {d['Name']: d['DefaultValue'] for d in formData.toolArgs.data}
     cp.update_config(toolFile, settings.templateFiles['defaultValueSection'], defaultArguments)
 

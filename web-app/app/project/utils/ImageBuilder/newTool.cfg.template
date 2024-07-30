@@ -1,3 +1,7 @@
+[general]
+pretty_name = 
+description = 
+
 [container]
 image = 
 mountpoint_base = /cloneDetection/
