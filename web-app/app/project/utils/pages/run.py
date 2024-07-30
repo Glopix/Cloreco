@@ -58,7 +58,7 @@ def duplicate_tool_config(tool: str, newName: str) -> tuple[str, int]:
     """
     # ensure there is no path in front of the tools file name
     tool    = Path(tool)
-    tool    = Path(tool.name)
+    tool    = str(Path(tool.name))
 
     confDir = Path(settings.directories["confWorkbench"])
     fileExtensionBase    = settings.templateFiles['fileExtensionBase']
@@ -67,11 +67,11 @@ def duplicate_tool_config(tool: str, newName: str) -> tuple[str, int]:
     if not confDir.joinpath(tool).is_file():
         return "Error: specified file does not exist", 400
     
-    if not tool.name.endswith(fileExtensionWebEdit):
+    if not tool.endswith(fileExtensionWebEdit):
         return f"Error: invalid specified file. Expected web edit template file ({fileExtensionWebEdit})", 400
 
     # tool name without file extension
-    tool = tool.name.rstrip(fileExtensionWebEdit)
+    tool = tool.removesuffix(fileExtensionWebEdit)
 
     srcTemplate    = confDir / f"{tool}{fileExtensionBase}"
     newTemplate    = confDir / f"{tool} ({newName}){fileExtensionBase}"
