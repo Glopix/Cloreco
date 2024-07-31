@@ -9,11 +9,16 @@
 
 FROM ghcr.io/glopix/cloreco-images/iclones:last-successfull-build
 
+ARG app=/cloneDetection/Applications/iClones/
+
 ENV LANG=C.UTF-8 \
     LANGUAGE=C.UTF-8 \
     LC_ALL=C.UTF-8
 
 ADD ./entrypoint.py /cloneDetection/entrypoint.py
+# copy runner script
+ADD ./iclones_Source_Runner.sh ${app}/iclones/iclones_Source_Runner.sh
+RUN chmod +x ${app}/iclones/iclones_Source_Runner.sh
 
 WORKDIR /cloneDetection/BigCloneEval/commands/
 

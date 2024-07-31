@@ -112,8 +112,8 @@ class BenchmarkRunner:
             return
         
         print(f"executing startup script '{startupScript}'")
-        # capture_output not set --> output to stdout of caller = to docker output
-        subprocess.run(["bash", startupScript], check=True)
+        
+        self.run_command(["bash", startupScript])
 
 
     def run_benchmark_startup(self) -> None:
@@ -130,8 +130,8 @@ class BenchmarkRunner:
             return
         
         print(f"executing benchmark startup script '{startupScript}'")
-        # capture_output not set --> output to stdout of caller = to docker output
-        subprocess.run(["bash", startupScript], check=True)
+        
+        self.run_command(["bash", startupScript])
 
 
     def assemble_benchmark_commands(self) -> None:
@@ -191,34 +191,46 @@ class BenchmarkRunner:
                 self.evaluateTool.append(f"--{option}={value}")
 
 
-    def run_command(self, command, env=None) -> None:
+    def run_and_measure_command(self, command, env={}) -> None:
         """
+        Wrapper for run_command() method:
         Runs the specified benchmark command, 
         prints the executed command with all arguments,
-        prints and saves the runtime of the command.
-        
+        prints and saves the runtime of the command.       
         """
-        command_name = command[0].replace("./", "")
+        commandName = command[0].replace("./", "")
 
-        print(f"Start {command_name}", flush=True)
+        startTime = time()
+        self.run_command(command, env, commandName)
+        endTime = time()
+
+        # Calculate, save and print the elapsed time
+        elapsedTime = endTime - startTime
+        runtimeMessage = f"Runtime (s) of {commandName}: {elapsedTime:.2f}"
+        self.reportMessages.append(runtimeMessage)
+        print(runtimeMessage, flush=True)
+
+
+    def run_command(self, command, env={}, commandName=None) -> None:
+        """
+        Runs the specified benchmark command, 
+        prints the executed command with all arguments.
+        """
+        if not commandName:
+            if type(command) is list:  # concatenate elements of the 'command' list into a single string
+                commandName = ' '.join([str(item) for item in command])
+            else:
+                commandName = command
+
+        print(f"Start '{commandName}'", flush=True)
 
         # show complete command with all arguments
         print(*command, sep=' ', flush=True)
 
-        startTime = time()
-
         # capture_output not set --> output to stdout of caller = to docker output
-        subprocess.run(command, check=True, env=env)
+        subprocess.run(command, check=True, env=dict(environ, **env))
 
-        endTime = time()
-
-        print(f"'{command_name}' finished", flush=True)
-
-        # Calculate, save and print the elapsed time
-        elapsedTime = endTime - startTime
-        runtimeMessage = f"Runtime (s) of {command_name}: {elapsedTime:.2f}"
-        self.reportMessages.append(runtimeMessage)
-        print(runtimeMessage, flush=True)
+        print(f"'{commandName}' finished", flush=True)
 
 
     def insert_lines(self, dst, newLines, lineNumber) -> None: 
@@ -239,6 +251,7 @@ class BenchmarkRunner:
         with open(dst, 'w') as file:
             file.writelines(lines)
 
+
     def run(self) -> None:
         """
         Main method of this class. It runs all BigCloneEval commands (detectClones, clearClones, importClones, evaluateTool)
@@ -257,13 +270,14 @@ class BenchmarkRunner:
         self.reportMessages.append(f"Start at: {currentDateTime}")
 
         # run BigCloneEval commands:
-        self.run_command(self.detectClones, self.env)
-        #self.run_command(self.clearClones)
-        self.run_command(self.importClones)
-        self.run_command(self.evaluateTool)
+        self.run_and_measure_command(self.detectClones, self.env)
+        #self.run_and_measure_command(self.clearClones)
+        self.run_and_measure_command(self.importClones)
+        self.run_and_measure_command(self.evaluateTool)
 
         # insert messages (containing the runtime of each command) into the report file at line 4
         self.insert_lines(self.reportFile, self.reportMessages, 4)
+
 
 if __name__ == "__main__":
     benchmarkRunner = BenchmarkRunner().run()
