@@ -83,7 +83,9 @@ def delete_directories_except(parentDir: str, exceptDirs: list) -> None:
     dirs = [dir for dir in parentDir.iterdir() if dir.is_dir()]
 
     # type conversion: convert all list entries from int to str, to match the types of the 'dirs' list
-    exceptDirs = list(map(str, exceptDirs)) 
+    exceptDirs = list(map(str, exceptDirs))
+    # prepend the base path(parentDir) to each element in the exceptDirs array
+    exceptDirs = [parentDir / dir for dir in exceptDirs]
 
     # Iterate through the directories and delete those not in the specified list
     for dir in dirs:
@@ -117,10 +119,10 @@ def exclude_BigCloneBench_directories(benchmarkParts: str) -> None:
     # if nothing was specified, detectTool will be executed on all BigCloneBench directories
     # so delete nothing
     if keepDirs == '':
-        print(f"executing clone detection on all BCB directories")
+        print(f"executing clone detection on all BCB directories", flush=True)
         return
     else:
-        print(f"executing clone detection on these BCB directories: {keepDirs}")
+        print(f"executing clone detection on these BCB directories: {keepDirs}", flush=True)
 
 
     delete_directories_except(BCB_ijadataset_dir, keepDirs)
