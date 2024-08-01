@@ -187,14 +187,17 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(`DEBUG: ${eventName} Event: open`)
         };
         source.onerror = function(e) {
-            //console.log(e);
-            display_log_entry(`DEBUG: ${eventName} Event: error`);
+            console.log(e);
+            
+            //display_log_entry(`DEBUG: ${eventName} Event: error`);
+            console.log(`DEBUG: ${eventName} Event: error`);
 
             if (this.readyState === source.CONNECTING) {
-                display_log_entry(`DEBUG: Reconnecting (readyState=${this.readyState})...`);
+                //display_log_entry(`DEBUG: Reconnecting (readyState=${this.readyState})...`);
+                console.log(`DEBUG: Reconnecting (readyState=${this.readyState})...`);
             } else {
-                display_log_entry(`DEBUG: Error has occurred.`);
-
+                //display_log_entry(`DEBUG: Error has occurred.`);
+                console.log(`DEBUG: Error has occurred.`);
             }
         };
         source.onmessage = function(e) {
