@@ -10,7 +10,7 @@ benchmark_path = /cloneDetection/benchmark/
 benchmark-parts = all
 
 [detectClones-descriptions]
-benchmark-parts = Which parts of the GPTCloneBench clone database will be used <br> Valid values: fsc, tsc_p1_MT3, tsc_p1_T4, tsc_p2_MT3, tsc_p2_T4, "all" (default);    seperate multiple values by ',' '*' pattern allowed <br> e.g.: fsc, tsc_p1_*
+benchmark-parts = Which parts of GPTCloneBench database will be used.<br>Valid values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "all" (default); seperate multiple values by ',', ranges by '-' <br>e.g.: 0,3 or 2-4 
 
 [evaluateTool-defaults]
 min-lines = 

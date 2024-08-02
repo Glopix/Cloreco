@@ -14,7 +14,7 @@ benchmark-parts = Which parts of the BigCloneBench (IJaDataset) clone database w
 
 [evaluateTool-defaults]
 minimum-judges = 
-matcher = CoverageMatcher 0.7
+matcher =
 max-lines = 
 max-pretty =
 max-tokens = 
@@ -23,7 +23,7 @@ min-lines =
 min-pretty =
 min-tokens = 
 minimum-similarity =
-similarity-type = BOTH
+similarity-type =
 
 [evaluateTool-descriptions]
 minimum-judges = Minimum number of judges.
