@@ -13,8 +13,8 @@ RUN pip3 install javalang
 
 # download SourcererCC repo
 WORKDIR ${app}
-RUN git clone https://github.com/Mondego/SourcererCC .    && \
-    rm -rf ./WebApp/
+RUN git clone --single-branch https://github.com/Mondego/SourcererCC .    && \
+    rm -rf ./WebApp/ ./.git/
 
 # install SourcerCC
 WORKDIR ${app}/clone-detector/
@@ -24,7 +24,6 @@ RUN ant cdi    && \
 
 WORKDIR ${app}
 # copy helper scripts
-ADD ./adjustInput ./adjustInput/
 ADD ./bcboutput ./bcboutput/
 
 # copy tokenizers/block-level/config.ini

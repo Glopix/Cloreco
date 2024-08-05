@@ -1,19 +1,31 @@
 version: '3.10'
 services:
   sourcer-cc:
+    depends_on:
+      - benchmark
     image: ghcr.io/glopix/cloreco-images/sourcerer-cc
     container_name: sourcerer-cc
     volumes:
       # mount config file
-      - ./sourcerer-cc.properties:/cloneDetection/Applications/SourcerCC/clone-detector/sourcerer-cc.properties
+      - ./Sourcerer-CC.cfg:/cloneDetection/Applications/SourcerCC/clone-detector/sourcerer-cc.properties
 
       # mount config file of BigCloneEval commands (used by entrypoint.py)
       - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
 
       # directory: report from detectClones 
-      - ../reports/:/cloneDetection/reports/
+      - ../reports/SourcererCC.csv:/cloneDetection/Sourcerer-CC.csv
       # directory: final report from evaluateTool 
-      - ../evaluation/:/cloneDetection/evaluation/
+      - ../evaluation/SourcererCC.report:/cloneDetection/Sourcerer-CC.report
+
+      - share:/cloneDetection/benchmark
     
-    #entrypoint: /bin/bash -c "sleep 30000"
+    entrypoint: /bin/bash -c "sleep 30000"
+
+  benchmark:
+    image: ghcr.io/glopix/cloreco-images/gpt-clone-bench-benchmark
+    volumes:
+      - share:/cloneDetection/benchmark
+
+volumes:
+  share:
 

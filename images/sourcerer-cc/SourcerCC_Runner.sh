@@ -16,16 +16,24 @@ fi
 
 inputfolder="$1"
 foldername="${1##*/}"
-outputfolder="tokenizers/block-level/"${foldername} 
+sourcererCC_Input="${MAIN_DIR}/tokenizers/block-level/"${foldername}
 
-python3 adjustInput/main.py ${inputfolder} ${outputfolder}  || exit 1
-echo "${foldername}"        > "tokenizers/block-level/list.txt"
+function cleanup {
+  rm -r "${MAIN_DIR}/tokenizers/block-level/logs"                 &>> $OUTPUT_TARGET
+  rm -r "${MAIN_DIR}/tokenizers/block-level/blocks_tokens"        &>> $OUTPUT_TARGET
+  rm -r "${MAIN_DIR}/tokenizers/block-level/bookkeeping_projs"    &>> $OUTPUT_TARGET
+  rm -r "${MAIN_DIR}/tokenizers/block-level/file_block_stats"     &>> $OUTPUT_TARGET
+  rm -r "${MAIN_DIR}/tokenizers/block-level/list.txt"             &>> $OUTPUT_TARGET
+}
+
+cleanup
+
+# link the benchmark dataset input to the sourcererCC input directory
+ln -s $inputfolder $sourcererCC_Input
 
 cd "${MAIN_DIR}/tokenizers/block-level/"
-rm -r "logs"                        &>> $OUTPUT_TARGET
-rm -r "blocks_tokens"               &>> $OUTPUT_TARGET
-rm -r "bookkeeping_projs"           &>> $OUTPUT_TARGET
-rm -r "file_block_stats"            &>> $OUTPUT_TARGET
+find "$foldername/" -type d    > "${MAIN_DIR}/tokenizers/block-level/list.txt"
+
 python3 tokenizer.py folderblocks   &>> $OUTPUT_TARGET    || exit 1
 
 cat blocks_tokens/* > blocks.file
@@ -36,13 +44,8 @@ cd "${MAIN_DIR}/clone-detector/"
 python3 controller.py 1             &>> $OUTPUT_TARGET    || exit 1
 
 # output clone pairs to detectClones 
-cd "${MAIN_DIR}/bcboutput/"
-python3 main.py                     2> $OUTPUT_TARGET     || exit 1
+python3 "${MAIN_DIR}/bcboutput/main.py"   2> $OUTPUT_TARGET     || exit 1
 
-cd "${MAIN_DIR}"
-rm -r "tokenizers/block-level/logs"                 &>> $OUTPUT_TARGET
-rm -r "tokenizers/block-level/blocks_tokens"        &>> $OUTPUT_TARGET
-rm -r "tokenizers/block-level/bookkeeping_projs"    &>> $OUTPUT_TARGET
-rm -r "tokenizers/block-level/file_block_stats"     &>> $OUTPUT_TARGET
-rm -r "tokenizers/block-level/${foldername}/"       &>> $OUTPUT_TARGET
+cleanup
+rm    "${MAIN_DIR}/tokenizers/block-level/${foldername}"       &>> $OUTPUT_TARGET
 
