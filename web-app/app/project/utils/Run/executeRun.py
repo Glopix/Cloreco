@@ -168,15 +168,15 @@ class ExecuteRun(AbortableTask):
         while(True):
             try:
                 # Attempt to wait for the container to finish, with a timeout of 1 second
-                container.wait(timeout=1)
+                container.wait(timeout=2)
                 # exit this method, if the container finished execution
                 return
             # if the container has not finished, this Exception is raised and will be ignored
             except requests.exceptions.ConnectionError:
                 pass
             except requests.exceptions.RequestException as exc:
-                print(f"Unexpected error: {exc}")
-                log.debug(f"Unexpected error: {exc}")
+                print(f"Unexpected error while waiting for the container: {type(exc)} : {exc}")
+                log.debug(f"Unexpected error while waiting for the container: {type(exc)} : {exc}")
 
             # check 'abort' state of this task. Can be set via abort_run() in run.py
             if self.is_aborted():
