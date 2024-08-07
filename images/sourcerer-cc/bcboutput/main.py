@@ -29,9 +29,15 @@ def readAllFunctionInfos():
 
 if __name__ == "__main__":
     functionDict = readAllFunctionInfos()
-    with open(
-        BASE_DIR.parent / "clone-detector/NODE_1/output8.0/query_1clones_index_WITH_FILTER.txt"
-    ) as f:
+
+    # The location of SourcererCC's output file depends on the used options, like similarity threshold 
+    # e.g. output file location: 
+    # clone-detector/NODE_1/output7.0/query_1clones_index_WITH_FILTER.txt
+    outputDir  = BASE_DIR.parent / "clone-detector" / "NODE_1"
+    outputFile = outputDir.glob("output*/query*.txt")
+    outputFile = list(outputFile)[0]
+
+    with open(outputFile) as f:
         for line in f:
             line = line.rstrip()
             parts = line.split(",")
