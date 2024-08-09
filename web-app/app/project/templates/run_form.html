@@ -64,7 +64,7 @@
                     {% for argument in benchmark["detectClonesArguments"] %}
                     <div class="pure-u-1 pure-u-md-1-2 argument">
                         <label for="{{ benchmark.filename }}__{{ argument.name }}">{{ argument.name }}</label>
-                        <p>{{ allow_linebreaks(argument.description) }}</p>
+                        <p class="pure-u-23-24">{{ allow_linebreaks(argument.description) }}</p>
                         <input type="text" id="{{ benchmark.filename }}__{{ argument.name }}"
                             name="{{ benchmark.filename }}__{{ argument.name }}" value="{{ argument.default }}"
                             class="pure-u-23-24" >
@@ -78,7 +78,7 @@
                     {% for argument in benchmark["evaluateToolArguments"] %}
                     <div class="pure-u-1 pure-u-md-1-2 argument">
                         <label for="{{ benchmark.filename }}__{{ argument.name }}">{{ argument.name }}</label>
-                        <p>{{ allow_linebreaks(argument.description) }}</p>
+                        <p class="pure-u-23-24">{{ allow_linebreaks(argument.description) }}</p>
                         <input type="text" id="{{ benchmark.filename }}__{{ argument.name }}"
                             name="{{ benchmark.filename }}__{{ argument.name }}" value="{{ argument.default }}"
                             class="pure-u-23-24" >
@@ -114,7 +114,7 @@
                     {% for argument in detector["arguments"] %}
                     <div class="pure-u-1 pure-u-md-1-2 argument">
                         <label for="{{ detector.filename }}__{{ argument.name }}">{{ argument.name }}</label>
-                        <p>{{ allow_linebreaks(argument.description) }} </p>
+                        <p class="pure-u-23-24">{{ allow_linebreaks(argument.description) }} </p>
                         <input type="text" id="{{ detector.filename }}__{{ argument.name }}"
                             name="{{ detector.filename }}__{{ argument.name }}" value="{{ argument.default }}"
                         class="pure-u-23-24">
@@ -129,7 +129,7 @@
                 {% for argument in detector["benchmarkArguments"] %}
                 <div class="pure-u-1 pure-u-md-1-2 argument">
                     <label for="{{ detector.filename }}__{{ detector.benchmarkCfgFilename }}__{{ argument.name }}">{{ argument.name }}</label>
-                    <p>{{ allow_linebreaks(argument.description) }}</p>
+                    <p class="pure-u-23-24">{{ allow_linebreaks(argument.description) }}</p>
                     <input type="text"
                         id="{{ detector.filename }}__{{ detector.benchmarkCfgFilename }}__{{ argument.name }}"
                         name="{{ detector.filename }}__{{ detector.benchmarkCfgFilename }}__{{ argument.name }}"
