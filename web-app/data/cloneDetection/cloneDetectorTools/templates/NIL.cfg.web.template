@@ -9,7 +9,7 @@ mountpoint_detector_config = /cloneDetection/Applications/nil/NIL.config
 mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg
 
 [benchmark-argument-descriptions]
-max_files = Maximum amount of files
+max_files = The maximum number of files this tool can handle. If the number of benchmark files exceeds this limit, the benchmark dataset will be automatically divided into multiple partitions to bypass the tool's scalability constraints.
 logging_verbose = Save stdout and stderr of the detector tool in a log file? (true or false)
 
 [benchmark-argument-defaults]
