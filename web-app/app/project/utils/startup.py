@@ -33,20 +33,24 @@ def check_and_initialize_data_directory(override:bool = False) -> None:
     confWorkbenchDir = Path(settings.directories['confWorkbench'])
 
     # copy the default /app/data_default directory to /app/data, if the former directories do not exist
-    if not benchmarkDir.exists() or not confTemplatesDir.exists() or not confWorkbenchDir.exists() or override:
-        if not override:
-            print("The data directory at /app/data/ is empty or is missing directories.")
-            print("Initializing the data environment by copying the default directory structure...")
+    if not override and benchmarkDir.exists() and confTemplatesDir.exists() and confWorkbenchDir.exists():
+        return
+    
+    if not override:
+        print("The data directory at /app/data/ is empty or is missing directories.")
+        print("Initializing the 'data' environment by copying the default directory structure...")
 
-        dataDir = Path("/app/data/")
-        dataDefaultDir = Path("/app/data_default/")
-        for file in dataDefaultDir.rglob("*"):
-            dst = dataDir / file.relative_to(dataDefaultDir)
-            if file.is_dir():
-                dst.mkdir(parents=True, exist_ok=True)
-            else:
-                if not dst.exists() or override:
-                    copy2(file, dst)
+    dataDir = Path("/app/data/")
+    dataDefaultDir = Path("/app/data_default/")
+    for file in dataDefaultDir.rglob("*"):
+        dst = dataDir / file.relative_to(dataDefaultDir)
+        if file.is_dir():
+            dst.mkdir(parents=True, exist_ok=True)
+        else:
+            if not dst.exists() or override:
+                copy2(file, dst)
+
+    print("Done (re)initializing the 'data' environment by copying the default directory structure")
 
 
 def validate_config_templates() -> None: 
