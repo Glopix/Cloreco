@@ -4,7 +4,7 @@ import project.settings as settings
 import project.utils.configFilesParser.configParserFiles as cp
 from pathlib import Path
 from shutil import copy2
-
+import re
 
 def read_benchmark_files(fromDir:str = None) -> list[dict]:
     """
@@ -361,3 +361,33 @@ def copy_config_files_from_template_dir_to_workbench() -> None:
     for file in srcFiles:
         copy2(templDir / file, confDir)
 
+def convert_to_image_name(name: str) -> tuple[str, str]:
+    """
+    Converts a string into:
+        - a string compatible with the Docker image format (image name) and
+        - a string without (back)slashes, whitespaces, dots and commas (pretty name)
+
+    This function processes the given software name to fit the Docker image naming conventions.
+    It involves replacing certain characters, like whitespaces, with underscores or hyphens, 
+    removing non-ASCII characters, and replacing uppercase letters.
+
+    Args:
+        name (str): The original name of the software.
+    Returns:
+        tuple: The converted name suitable for Docker image naming as string and a 'pretty' name string.
+    """
+    # Replace slashes, backslashes and whitespaces with a underscores
+    name = re.sub(r'[\/\\\s]', '_', name)
+    # Replace dots and commas with hyphens
+    name = re.sub(r'[\,\.]', '-', name)
+    prettyName = name
+    # Remove all characters that are not ASCII letters, numbers, hyphens or underscores
+    name = re.sub(r'[^a-zA-Z0-9-_]', '', name)
+    # Convert first letter to lowercase
+    name = re.sub(r'^([A-Z]+)', lambda x: x.group(1).lower(), name)
+    # Convert uppercase letters to lowercase if preceded by a hyphen or underscore
+    name = re.sub(r'(?<=[-_])([A-Z]+)', lambda match: match.group(1).lower(), name)
+    # Convert uppercase letters to lowercase and prepend with a hyphen
+    name = re.sub(r'([A-Z]+)', lambda match: f"-{match.group(1).lower()}", name)
+
+    return name, prettyName

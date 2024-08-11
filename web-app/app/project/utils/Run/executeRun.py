@@ -22,6 +22,7 @@ from threading import Thread, Event
 from time import sleep
 from flask import current_app
 from project.utils.Run import toolStatistics
+from project.utils.utils import convert_to_image_name
   
 class ExecuteRun(AbortableTask):
 
@@ -443,8 +444,7 @@ class ExecuteRun(AbortableTask):
         # remove file extension
         detectorName = str(detector['detector_config_filename']).split(".", 1)[0]
 
-        prettyDetectorName = detectorName
-        detectorName = detectorName.strip(" ")
+        simpleDetectorName, _ = convert_to_image_name(detectorName)
 
         self.numExecutedContainers += 1
         self.send_progress_update(status="running", msg=f"preparing container for '{detectorName}'")
@@ -453,13 +453,13 @@ class ExecuteRun(AbortableTask):
         benchmarkVolume = self.currentBenchmark["volume"].name
 
         env = {
-            "CLONE_DETECTOR_TOOL_NAME"  : prettyDetectorName,
+            "CLONE_DETECTOR_TOOL_NAME"  : detectorName,
             "BENCHMARK_NAME"            : self.currentBenchmark["name"]
         }
 
         # Define container configuration
         containerConfig = {
-            'name'              : f"{self.runID}-{detectorName}",
+            'name'              : f"{self.runID}-{simpleDetectorName}",
             'image'             : detector["container"]["image"],
             #'entrypoint'        : f"bash -c 'while sleep 2; do echo $((i++)); ; done'",
             #'entrypoint'        : f"bash -c 'sleep 5'",

@@ -8,12 +8,11 @@ import docker
 from flask import current_app
 from celery.contrib.abortable import AbortableTask
 from ansi2html import Ansi2HTMLConverter
-import requests
 from flask_sse import sse
 from loguru import logger as log
 from time import sleep
 from threading import Thread, Event
-import re
+from project.utils.utils import convert_to_image_name
 
 import project.settings as settings
 from project.utils.configure import configure_redis
@@ -32,7 +31,7 @@ class ImageBuilder(AbortableTask):
     """
 
     def __call__(self, toolName: str, installDir: str, gitRepoURL: str, jdkVersion: str, distro: str) -> None:
-        self.imageName, self.toolName  = self.convert_to_image_name(toolName)
+        self.imageName, self.toolName  = convert_to_image_name(toolName)
         self.installDir = Path(installDir.strip())
         self.runnerPath = self.installDir / "runner.sh"
         self.gitRepoURL = gitRepoURL
@@ -73,38 +72,6 @@ class ImageBuilder(AbortableTask):
 
         # Call the main task logic
         self.start()
-
-
-    def convert_to_image_name(self, name: str) -> tuple[str, str]:
-        """
-        Converts a string into:
-         - a string compatible with the Docker image format (image name) and
-         - a string without (back)slashes, whitespaces, dots and commas (pretty name)
-
-        This function processes the given software name to fit the Docker image naming conventions.
-        It involves replacing certain characters, like whitespaces, with underscores or hyphens, 
-        removing non-ASCII characters, and replacing uppercase letters.
-
-        Args:
-            name (str): The original name of the software.
-        Returns:
-            tuple: The converted name suitable for Docker image naming as string and a 'pretty' name string.
-        """
-        # Replace slashes, backslashes and whitespaces with a underscores
-        name = re.sub(r'[\/\\\s]', '_', name)
-        # Replace dots and commas with hyphens
-        name = re.sub(r'[\,\.]', '-', name)
-        prettyName = name
-        # Remove all characters that are not ASCII letters, numbers, hyphens or underscores
-        name = re.sub(r'[^a-zA-Z0-9-_]', '', name)
-        # Convert first letter to lowercase
-        name = re.sub(r'^([A-Z]+)', lambda x: x.group(1).lower(), name)
-        # Convert uppercase letters to lowercase if preceded by a hyphen or underscore
-        name = re.sub(r'(?<=[-_])([A-Z]+)', lambda match: match.group(1).lower(), name)
-        # Convert uppercase letters to lowercase and prepend with a hyphen
-        name = re.sub(r'([A-Z]+)', lambda match: f"-{match.group(1).lower()}", name)
-
-        return name, prettyName
 
 
     def publish_to_sse(self, msg: str, channel="imageBuild_logs") -> None:
