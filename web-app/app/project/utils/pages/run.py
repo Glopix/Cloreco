@@ -74,10 +74,10 @@ def duplicate_tool_config(tool: str, newName: str) -> tuple[str, int]:
     tool = tool.removesuffix(fileExtensionWebEdit)
 
     srcTemplate    = confDir / f"{tool}{fileExtensionBase}"
-    newTemplate    = confDir / f"{tool} ({newName}){fileExtensionBase}"
+    newTemplate    = confDir / f"{tool}({newName}){fileExtensionBase}"
 
     srcWebTemplate = confDir / f"{tool}{fileExtensionWebEdit}"
-    newWebTemplate = confDir / f"{tool} ({newName}){fileExtensionWebEdit}"
+    newWebTemplate = confDir / f"{tool}({newName}){fileExtensionWebEdit}"
 
     # copy web template file and config template files
     copy2(srcTemplate, newTemplate)
@@ -88,7 +88,7 @@ def duplicate_tool_config(tool: str, newName: str) -> tuple[str, int]:
     configFile = cp.read_cp_config_file(newWebTemplate)
     if configFile.has_section(generalSection):
         prettyName = configFile.get(generalSection, option="pretty_name")
-        prettyName = f"{prettyName} ({newName})"
+        prettyName = f"{prettyName}({newName})"
     else: 
         prettyName = newName
 
