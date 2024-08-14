@@ -361,21 +361,30 @@ def copy_config_files_from_template_dir_to_workbench() -> None:
     for file in srcFiles:
         copy2(templDir / file, confDir)
 
-def convert_to_image_name(name: str) -> tuple[str, str]:
+def convert_to_image_name(name: str, preserveSuffix: bool=False) -> tuple[str, str]:
     """
     Converts a string into:
         - a string compatible with the Docker image format (image name) and
         - a string without (back)slashes, whitespaces, dots and commas (pretty name)
 
-    This function processes the given software name to fit the Docker image naming conventions.
+    This function processes the given string, e.g. software name, to fit the Docker image naming conventions.
     It involves replacing certain characters, like whitespaces, with underscores or hyphens, 
     removing non-ASCII characters, and replacing uppercase letters.
 
     Args:
         name (str): The original name of the software.
+        preserveSuffix (bool): whether to keep the original (file name) suffix
     Returns:
         tuple: The converted name suitable for Docker image naming as string and a 'pretty' name string.
     """
+    if preserveSuffix:
+        split = name.rsplit(".",1)
+        if len(split) == 2:
+            name = split[0]
+            suffix = split[1]
+        else:
+            preserveSuffix = False
+
     # Replace slashes, backslashes and whitespaces with a underscores
     name = re.sub(r'[\/\\\s]', '_', name)
     # Replace dots and commas with hyphens
@@ -389,5 +398,9 @@ def convert_to_image_name(name: str) -> tuple[str, str]:
     name = re.sub(r'(?<=[-_])([A-Z]+)', lambda match: match.group(1).lower(), name)
     # Convert uppercase letters to lowercase and prepend with a hyphen
     name = re.sub(r'([A-Z]+)', lambda match: f"-{match.group(1).lower()}", name)
+
+    if preserveSuffix:
+        name = f"{name}.{suffix}"
+        prettyName = f"{prettyName}.{suffix}"
 
     return name, prettyName

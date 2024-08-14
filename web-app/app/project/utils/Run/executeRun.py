@@ -322,7 +322,10 @@ class ExecuteRun(AbortableTask):
         if pathInContainer:
             pathInContainer = Path(pathInContainer)
         else:
-            pathInContainer = Path(detector['container']['mountpoint_base']) / fileName
+            # Remove special characters from the name of the file in the container 
+            # to ensure that there are no problems with applications in the container (such as detectClones)
+            simpleFileName, _  = convert_to_image_name(fileName, preserveSuffix=True)
+            pathInContainer = Path(detector['container']['mountpoint_base']) / simpleFileName
 
         paths = SimpleNamespace(
             filename        = fileName, 
@@ -442,7 +445,7 @@ class ExecuteRun(AbortableTask):
         - detector: A dictionary containing the detector's configuration.
         """
         # remove file extension
-        detectorName = str(detector['detector_config_filename']).split(".", 1)[0]
+        detectorName = str(detector['detector_config_filename']).removesuffix(settings.templateFiles['fileExtensionWebEdit'])
 
         simpleDetectorName, _ = convert_to_image_name(detectorName)
 
@@ -453,7 +456,7 @@ class ExecuteRun(AbortableTask):
         benchmarkVolume = self.currentBenchmark["volume"].name
 
         env = {
-            "CLONE_DETECTOR_TOOL_NAME"  : detectorName,
+            "CLONE_DETECTOR_TOOL_NAME"  : simpleDetectorName,
             "BENCHMARK_NAME"            : self.currentBenchmark["name"]
         }
 
