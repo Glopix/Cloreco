@@ -1,6 +1,5 @@
-# StoneDetector
+# NIL
 # https://github.com/kusumotolab/NIL
-# https://git.uni-jena.de/pi65gop/integrate-NIL/
 # docker build . -t ghcr.io/glopix/cloreco-images/nil:latest
 FROM ghcr.io/glopix/cloreco-images/detector-tool-base:ubuntu22.04-jdk21
 
