@@ -21,12 +21,12 @@ from project.utils.configure import configure_redis
 class ImageBuilder(AbortableTask):
     """
     This class is used to build images based on a git repository and user input from the website.
-    It can also upload (push) a new build image to the container registry, if the feature is enabled.
+    It can also upload (push) a new build image to the container image registry, if the feature is enabled.
     This can be set via env vars in docker-compose.yml
 
-    Note: Tasks of this class cannot be cancelled, although it is based on the 'AbortableTask' class, 
-    as it uses the Docker Python SDK, which does not provide a direct method for cancelling a build process once it has been initiated with the build method. 
-    The Docker build process runs in the Docker daemon, not in the Python process. 
+    Note: Tasks of this class cannot be cancelled, although it is based on the 'AbortableTask' class,
+    as it uses the Docker Python SDK, which does not provide a direct method for cancelling a build process once it has been initiated with the build method.
+    The Docker build process runs in the Docker daemon, not in the Python process.
     Therefore, the build process cannot be interrupted from Python once it has been passed to Docker.
     """
 
@@ -57,7 +57,7 @@ class ImageBuilder(AbortableTask):
 
         self.abortHeartbeats = Event()
 
-        # login to the container registry
+        # login to the container image registry
         # This registry is the registry where the base image for all images is stored
         # All new images will be stored in this registry
         self.dockerClient = docker.from_env()
@@ -85,7 +85,7 @@ class ImageBuilder(AbortableTask):
         """
         send updates about the current progress of execution
         via the "imageBuild_progress" channel
-        """           
+        """
         progressUpdate = {
             "type"           : "imageBuild",
             "status"         : status,
@@ -118,8 +118,8 @@ class ImageBuilder(AbortableTask):
         conv = Ansi2HTMLConverter(inline=False)
         html = conv.convert(line, full=False)
         return html
-    
-    
+
+
     def configure_logging(self) -> None:
         self.log = log
         #self.log.add(sys.stdout, format="{time:YYYY-MM-DD HH:mm:ss} {level} {message}", level="DEBUG")
@@ -157,7 +157,7 @@ class ImageBuilder(AbortableTask):
 
     def _print_build_log(self, line: dict, filterKeys: list = ["stream"]) -> None:
         """
-        Filter out keys from a Docker build log entry (json/dict), 
+        Filter out keys from a Docker build log entry (json/dict),
         and send them as message to log (and SSE stream).
         """
         # Extracting the main message
@@ -171,7 +171,7 @@ class ImageBuilder(AbortableTask):
         if error:
             if error == "The command '/bin/sh -c bash -c '(set -e; source ./install.sh)'' returned a non-zero code: 1":
                 # This error occurs if the user created install.sh script returns an error
-                # since this error message could be misleading/confusing for the user, 
+                # since this error message could be misleading/confusing for the user,
                 # another error message is displayed instead
                 self.log.error(f"Error in: install.sh")
                 self.log.error(f"Check for error in the preceding lines, improve your install.sh script and restart the process by submitting your tool repo again.")
@@ -223,21 +223,21 @@ class ImageBuilder(AbortableTask):
 
         self.log.info(f"image build completed")
 
-        
+
     def upload_image(self) -> None:
         """
-        upload (push) a new build image to the container registry, if the feature is enabled.
+        upload (push) a new build image to the container image registry, if the feature is enabled.
         This can be set via env vars in docker-compose.yml
         """
         if self.redis.get("container_registry") != "enabled" or self.redis.get("container_registry.upload_new_images") != "enabled":
-            self.log.info(f"image '{self.imageFullTag}' will NOT be uploaded/pushed to the container registry")
+            self.log.info(f"image '{self.imageFullTag}' will NOT be uploaded/pushed to the container image registry")
             return
-        
+
         self.log.info(f"push image '{self.imageFullTag}' to repo: {self.imageRepo}")
         # upload/push Docker image
         for line in self.dockerClient.api.push(self.imageFullTag, stream=True, decode=True):
             self._print_build_log(line, filterKeys=['status', 'progress'])
-        
+
 
     def success(self) -> None:
         """
@@ -260,7 +260,7 @@ class ImageBuilder(AbortableTask):
         self.send_progress_update("error", "image build failed")
         self.redis.set("imageBuild.status", "failed")
 
-    
+
     def final(self) -> None:
         """
         perform cleanup steps at the end of image building process

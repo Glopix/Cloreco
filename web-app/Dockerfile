@@ -1,4 +1,4 @@
-FROM python:3.12 as base
+FROM python:3.12-alpine AS base
 RUN pip install flask flask_sse flask-wtf celery configparser pandas docker loguru plotnine ansi2html
 
 ADD app /app

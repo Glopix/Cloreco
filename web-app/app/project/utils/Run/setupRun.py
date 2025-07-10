@@ -27,17 +27,17 @@ class SetupRun():
                 self.importDir      = Path(importDir)  # only used for CLI Mode
             else:
                 raise ValueError("value of paramter importDir missing")
-            
+
 
     def get_selected(self, templates: list[dict]) -> list[dict]:
         """
-        selects all elements of the specified templates list 
-        (self.detectorTemplates for clone detector tools or self.benchmarks for benchmarks) 
+        selects all elements of the specified templates list
+        (self.detectorTemplates for clone detector tools or self.benchmarks for benchmarks)
         that were selected in the web form.
         This means that only the detector tools whose checkbox was clicked in the web form remain.
 
         Returns:
-            Array of selected dicts (detector tools whose checkbox was clicked), 
+            Array of selected dicts (detector tools whose checkbox was clicked),
             containing the filename and config content of each file ( similar format as read_template_files() )
         """
 
@@ -46,7 +46,7 @@ class SetupRun():
             formValueName = f"{filename}--selected"
 
             return self.formData.get(formValueName)
-        
+
         selectedDetectors = [detector for detector in templates if is_selected(detector)]
 
         return selectedDetectors
@@ -58,16 +58,16 @@ class SetupRun():
 
         # prevent whitespaces, since this could lead to error in docker
         if not fullmatch(pattern=r"^[\w\d\_\-\.]*", string=self.runID):
-            return {'type': "error", 
+            return {'type': "error",
                     'message': "Run name: only [a-z A-Z 0-9 _ . -] allowed, no whitespaces" }
 
         # check if a run is executed at the moment
         if self.redis.hget('run.progress', 'isExecuted') == "True":
-            return {'type': "error", 
+            return {'type': "error",
                     'message': "Another run is being executed at the moment. Please wait and try again" }
-        
+
         self.redis.set("run.status", "starting")
-        
+
         # update detectors list
         # only those detector tools whose checkbox was clicked in the web form remain
         self.detectorTemplates = self.get_selected(self.detectorTemplates)
@@ -76,25 +76,25 @@ class SetupRun():
 
         if len(self.detectorTemplates) == 0:
             self.redis.set("run.status", "aborted")
-            return {'type': "error", 
+            return {'type': "error",
                     'message': "no detector tool selected" }
-        
+
         if len(self.benchmarks) == 0:
             self.redis.set("run.status", "aborted")
-            return {'type': "error", 
+            return {'type': "error",
                     'message': "no benchmark selected" }
 
         if self.cliMode:
             if not self.importDir.is_dir():
                 raise NotADirectoryError(f"{self.importDir} is not a directory")
-            
-            # Copies the entire directory recursively from self.importDir (given as CLI option) to the new run directory. 
+
+            # Copies the entire directory recursively from self.importDir (given as CLI option) to the new run directory.
             # If the destination directory already exist, it will be overwritten (dirs_exist_ok=True).
             # Files matching the patterns '*.csv', '*.report', and '*.log' will be ignored during the copy process.
             csvSuffix = settings.benchmarks['detectedClonesFileExtension']
             ReportSuffix = settings.benchmarks['reportFileExtension']
 
-            shutil.copytree(self.importDir, self.runDir, dirs_exist_ok=True, 
+            shutil.copytree(self.importDir, self.runDir, dirs_exist_ok=True,
                             ignore=shutil.ignore_patterns(csvSuffix, ReportSuffix,'*.log'))
 
         else:
@@ -107,19 +107,19 @@ class SetupRun():
         # extract benchmark directories and names
         benchmarks = self.assamble_benchmarks()
 
-        # run container of each detector tool 
+        # run container of each detector tool
         # in celery task queue, executed by worker services in the background
         start_container_runner.apply_async(args=(containerConfigs, str(self.runDir), benchmarks))
 
-        if self.cliMode: 
+        if self.cliMode:
             return {'type': "success", 'message': f"""Run started."""}
         else:
-            return {'type': "success", 
+            return {'type': "success",
                     'message': f"""Run started. <br>
-                            The current progress can be monitored via the 
-                            '<a href="{url_for("main.show_logs", logCategory="run")}">Logs (Run)</a>' 
+                            The current progress can be monitored via the
+                            '<a href="{url_for("main.show_logs", logCategory="run")}">Logs (Run)</a>'
                             menu item."""}
-    
+
 
     def assamble_benchmarks(self) -> list[dict]:
         """
@@ -156,7 +156,7 @@ class SetupRun():
         """
         benchmarks = []
         for benchmark in self.benchmarks:
-            benchmarks.append( 
+            benchmarks.append(
                 {
                 'name'      : benchmark['name'],
                 'general'   : benchmark['general'],
@@ -171,7 +171,7 @@ class SetupRun():
         Extract container config from clone detector tool config templates.
 
         Returns:
-            list of dictionaries, 
+            list of dictionaries,
             containing the configuration of the to be executed containers of each clone detector tool
             e.g.:
                 [
@@ -199,14 +199,14 @@ class SetupRun():
         """
         containerConfigs = []
         for template in self.detectorTemplates:
-            containerConfigs.append( 
+            containerConfigs.append(
                 {
                 'detector_config_filename'  : template['filename'],
                 'entrypoint_config_filename': template['benchmarkCfgFilename'],
                 'container'                 : template['container'],
                 }
             )
-        
+
         return containerConfigs
 
     def form_data_to_files(self) -> None:
@@ -214,8 +214,8 @@ class SetupRun():
         execute form_data_to_file() for each clone detector tool
         and create subdirectory
         """
-        # create a new directory, if it doesn't exist
-        self.runDir.mkdir(exist_ok=True)
+        # create a new directory if it doesn't exist
+        self.runDir.mkdir(exist_ok=True, parents=True)
 
         self.benchmarks_form_data_to_files()
 
@@ -261,9 +261,9 @@ class SetupRun():
 
     def form_data_to_file(self, detector: dict, directory: Path) -> None:
         """
-        Retrieve data from website form 
+        Retrieve data from website form
         and create two config files for each clone detector tool
-        based on the variable names from the template file 
+        based on the variable names from the template file
         with the values from the website form.
         config file 1: arguments for detector tool
         config file 2: benchmark arguments for entrypoint.py script (entrypoint.cfg)
@@ -297,7 +297,7 @@ class SetupRun():
         # write detector tool specific benchmark config to benchmark config file (default: entrypoint.cfg)
         cp.update_config(dstFile, section=settings.benchmarks['detectClonesSection'], config=config)
 
-    
+
     def benchmarks_form_data_to_files(self) -> None:
         evaluateToolDefaults = settings.benchmarks["evaluateToolDefaults"]
         evaluateToolSection = settings.benchmarks["evaluateToolSection"]
@@ -313,14 +313,14 @@ class SetupRun():
             templateFile = benchmark["filepath"]
             dstFile = runBenchmarkDir / settings.benchmarks["configFileName"]
 
-            # copy default values from benchmark template file into new entrypoint.cfg config file (evaluateTool arguments) in the run dir 
+            # copy default values from benchmark template file into new entrypoint.cfg config file (evaluateTool arguments) in the run dir
             cp.copy_config_section(templateFile, dstFile, srcSection=evaluateToolDefaults, dstSection=evaluateToolSection)
 
             # config for detector tool
             config = self.get_form_data(filename, arguments=benchmark['evaluateToolArguments'])
             cp.update_config(dstFile, evaluateToolSection, config)
 
-            # copy default values from benchmark template file into new entrypoint.cfg config file (detectTools arguments) in the run dir 
+            # copy default values from benchmark template file into new entrypoint.cfg config file (detectTools arguments) in the run dir
             cp.copy_config_section(templateFile, dstFile, srcSection=detectClonesDefaults, dstSection=detectClonesSection)
 
             # config for detector tool

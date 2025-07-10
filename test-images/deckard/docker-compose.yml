@@ -1,4 +1,3 @@
-version: '3.10'
 services:
   deckard:
     image: ghcr.io/glopix/cloreco-images/deckard
@@ -10,8 +9,8 @@ services:
       # mount config file of BigCloneEval commands (used by entrypoint.py)
       - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
 
-      # directory: report from detectClones 
+      # directory: report from detectClones
       - ../reports/:/cloneDetection/reports/
-      # directory: final report from evaluateTool 
+      # directory: final report from evaluateTool
       - ../evaluation/:/cloneDetection/evaluation/
 

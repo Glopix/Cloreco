@@ -35,7 +35,7 @@ def check_and_initialize_data_directory(override:bool = False) -> None:
     # copy the default /app/data_default directory to /app/data, if the former directories do not exist
     if not override and benchmarkDir.exists() and confTemplatesDir.exists() and confWorkbenchDir.exists():
         return
-    
+
     if not override:
         print("The data directory at /app/data/ is empty or is missing directories.")
         print("Initializing the 'data' environment by copying the default directory structure...")
@@ -53,7 +53,7 @@ def check_and_initialize_data_directory(override:bool = False) -> None:
     print("Done (re)initializing the 'data' environment by copying the default directory structure")
 
 
-def validate_config_templates() -> None: 
+def validate_config_templates() -> None:
     """
     Runs once at startup (__init__.py)
     Ensure there are config files for clone detector tools in the templates directory (by default cloneDetection/cloneDetectorTools/templates/ )
@@ -92,7 +92,7 @@ def validate_config_templates() -> None:
     # check if there are any web template files (.cfg.web.template)
     if len(webTemplateFiles) == 0:
         raise FileNotFoundError(f"no web template files ('{settings.templateFiles['fileExtensionWebEdit']}') found in template Directory {confDir}")
-    
+
     for webTemplate in webTemplateFiles:
         # check if base config template (.cfg.template) file exists
         detectorName = webTemplate.split(settings.templateFiles['fileExtensionWebEdit'],1)[0]
@@ -122,10 +122,10 @@ def on_celeryd_startup(sender=None, instance=None, **kwargs):
         check_container_registry_login()
         check_images()
     except Exception as exc:
-        set_startup_status(f"""There were errors during the start of the Celery (backend service) container. <br> 
-                           Please check the output of 'docker compose'! <br> 
+        set_startup_status(f"""There were errors during the start of the Celery (backend service) container. <br>
+                           Please check the output of 'docker compose'! <br>
                            Error message: <br>
-                           {exc}""", 
+                           {exc}""",
                            "error")
         print(exc)
         sleep(5)
@@ -137,7 +137,7 @@ def on_celeryd_startup(sender=None, instance=None, **kwargs):
 
 def set_startup_status(statusMsg: str, statusType: str) -> None:
     """
-    Set a start status with message and type (e.g. error, success). 
+    Set a start status with message and type (e.g. error, success).
     This status is displayed on the "Home" page, to indicates errors during startup.
     """
     redis = configure_redis()
@@ -150,23 +150,23 @@ def set_startup_status(statusMsg: str, statusType: str) -> None:
 
 def check_container_registry_login() -> None:
     """
-    Checks the login credentials for a container registry and configures Redis based on the availability and validity of these credentials.
+    Checks the login credentials for a container image registry and configures Redis based on the availability and validity of these credentials.
 
-    This function retrieves container registry credentials from environment variables. 
-    If any required environment variable is missing, it disables container registry functionality in Redis. 
-    If the environment variable 'PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY' is set and true, it attempts to log in to the specified container registry. 
-    On successful login, Redis is updated to reflect that the container registry is enabled. 
+    This function retrieves container image registry credentials from environment variables.
+    If any required environment variable is missing, it disables container image registry functionality in Redis.
+    If the environment variable 'PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY' is set and true, it attempts to log in to the specified container image registry.
+    On successful login, Redis is updated to reflect that the container image registry is enabled.
     If login fails, the program exits with an error message.
 
     Environment Variables:
-        CONTAINER_REGISTRY_LOGIN_USERNAME:          Username for the container registry.
-        CONTAINER_REGISTRY_LOGIN_PASSWORD_TOKEN:    Password or token for the container registry.
-        CONTAINER_REGISTRY_URL:                     URL of the container registry.  ( e.g.: ghcr.io )
-        CONTAINER_REGISTRY_REPOSITORY:              Container registry with repo    ( e.g.: ghcr.io/user4/myrepo/ )
-        PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY:  Flag to indicate whether to push images to the container registry.
+        CONTAINER_REGISTRY_LOGIN_USERNAME:          Username for the container image registry.
+        CONTAINER_REGISTRY_LOGIN_PASSWORD_TOKEN:    Password or token for the container image registry.
+        CONTAINER_REGISTRY_URL:                     URL of the container image registry.  ( e.g.: ghcr.io )
+        CONTAINER_REGISTRY_REPOSITORY:              container image registry with repo    ( e.g.: ghcr.io/user4/myrepo/ )
+        PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY:  Flag to indicate whether to push images to the container image registry.
 
     Raises:
-        SystemExit: If login to the container registry fails.
+        SystemExit: If login to the container image registry fails.
     """
     redis = configure_redis()
 
@@ -178,7 +178,7 @@ def check_container_registry_login() -> None:
         registry=environ['CONTAINER_REGISTRY_URL']
         repository=environ['CONTAINER_REGISTRY_REPOSITORY']
     except KeyError as exc:
-        print(f"Environment variable {exc} not found. Push of new created images of clone detector tools to a container registry will not be available.")
+        print(f"Environment variable {exc} not found. Push of new created images of clone detector tools to a container image registry will not be available.")
         redis.set("container_registry", "disabled")
         return
 
@@ -193,14 +193,14 @@ def check_container_registry_login() -> None:
         try:
             client.login(username=username, password=password, registry=registry)
         except docker.errors.APIError as exc:
-            error = f"Login at container registry {registry} failed: {exc}"
+            error = f"Login at container image registry {registry} failed: {exc}"
             print(error)
             exit(error)
 
-        print(f"Push of new created images of clone detector tools to container registry {registry} is enabled.")
+        print(f"Push of new created images of clone detector tools to container image registry {registry} is enabled.")
         redis.set("container_registry.upload_new_images", "enabled")
     else:
-        print(f"Environment variable 'PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY' is not set to 'True'. Push for new created images of clone detector tools to a container registry will not be available.")
+        print(f"Environment variable 'PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY' is not set to 'True'. Push for new created images of clone detector tools to a container image registry will not be available.")
         redis.set("container_registry.upload_new_images", "disabled")
 
 
@@ -212,10 +212,10 @@ def check_images() -> None:
     - Extracts Docker image names/tags from configuration templates.
     - Checks for the existence of these images locally.
     - Attempts to update or download missing images. (if 'UPDATE_IMAGES_ON_STARTUP' environment variable is not set or set to a truthy value)
-    
-    If any images are missing and cannot be downloaded 
-    (e.g., due to the 'UPDATE_IMAGES_ON_STARTUP' option being disabled, 
-        missing Images in the remote repository or network failures), 
+
+    If any images are missing and cannot be downloaded
+    (e.g., due to the 'UPDATE_IMAGES_ON_STARTUP' option being disabled,
+        missing Images in the remote repository or network failures),
     it prints an error message detailing the missing images and raises a exception.
 
     This check can be skipped by setting the 'SKIP_IMAGES_CHECK_ON_STARTUP' environment variable to a truthy value.
@@ -250,9 +250,9 @@ def check_images() -> None:
         else:
             print("Error: Failed to locate the following images locally:")
             print(f"{', '.join(missingImages)}")
-            print("""To resolve this, ensure the 'image' value ist correct, 
-build the images locally or set the 'UPDATE_IMAGES_ON_STARTUP' 
-environment variable to 'true' to attempt automatic download.""")            
+            print("""To resolve this, ensure the 'image' value ist correct,
+build the images locally or set the 'UPDATE_IMAGES_ON_STARTUP'
+environment variable to 'true' to attempt automatic download.""")
         raise docker.errors.ImageNotFound(f"{', '.join(missingImages)} images could not be found")
 
 
@@ -280,19 +280,19 @@ def check_images_exist_local(images: list[str]) -> list[str]:
     return missingImages
 
 
-def update_all_images(images: list[str], missingImages: list[str]) -> list[str]: 
+def update_all_images(images: list[str], missingImages: list[str]) -> list[str]:
     """
     Updates/pulls the current versions of all images for clone detector tools.
 
-    This function checks if the 'UPDATE_IMAGES_ON_STARTUP' environment variable is set to a falsy value (false, 0, f, no, disabled, disable). 
+    This function checks if the 'UPDATE_IMAGES_ON_STARTUP' environment variable is set to a falsy value (false, 0, f, no, disabled, disable).
     If set, it proceeds to update all images specified in the configuration templates for the clone detector tools and benchmark files.
 
-    The function reads image names from the configuration files and pulls the latest versions of these images from the specified container registry.
+    The function reads image names from the configuration files and pulls the latest versions of these images from the specified container image registry.
     """
     if environ.get('UPDATE_IMAGES_ON_STARTUP', default="true").lower() in ('false', '0', 'f', 'no', 'disabled', 'disable'):
         print("Environment variable 'UPDATE_IMAGES_ON_STARTUP' is not set to 'True'. Update/Pull of all images for clone detector tools will be skipped.")
         return missingImages
-    
+
     redis = configure_redis()
 
     dockerClient = docker.from_env()
@@ -317,7 +317,7 @@ def update_all_images(images: list[str], missingImages: list[str]) -> list[str]:
         except docker.errors.APIError as exc:
             print("Error: Failed to check image due to an API error: ")
             raise exc
-        
+
     print(f"Updated images: {', '.join(updatedImages)}")
     return missingImages
-    
+

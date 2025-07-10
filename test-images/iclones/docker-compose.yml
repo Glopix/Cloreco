@@ -1,18 +1,17 @@
-version: '3.10'
 services:
   stone-detector:
     image: ghcr.io/glopix/cloreco-images/iclones
     container_name: iclones
     volumes:
       # mount config file
-      - ./iclones_config.cfg:/cloneDetection/Applications/iClones/iclones.config 
+      - ./iclones_config.cfg:/cloneDetection/Applications/iClones/iclones.config
 
       # mount config file of BigCloneEval commands (used by entrypoint.py)
       - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
 
-      # directory: report from detectClones 
+      # directory: report from detectClones
       - ../reports/:/cloneDetection/reports/
-      # directory: final report from evaluateTool 
+      # directory: final report from evaluateTool
       - ../evaluation/:/cloneDetection/evaluation/
-    
-    #entrypoint: /bin/bash -c "sleep 700000000"
+
+    #entrypoint: ["/bin/bash", "-c", "sleep 900000"]

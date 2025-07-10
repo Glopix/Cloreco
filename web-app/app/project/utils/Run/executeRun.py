@@ -2,7 +2,7 @@
 functions / the Class in this file are used to execute a run.
 This means execution (docker) containers of all clone detector tools specified.
 Each container contains a clone detector tool, which will be executed.
-Mountpoints are created and used to transfer data (configuration file and result files from the tools and benchmarks) 
+Mountpoints are created and used to transfer data (configuration file and result files from the tools and benchmarks)
 between the host and the containers.
 """
 from celery.contrib.abortable import AbortableTask
@@ -23,7 +23,7 @@ from time import sleep
 from flask import current_app
 from project.utils.Run import toolStatistics
 from project.utils.utils import convert_to_image_name
-  
+
 class ExecuteRun(AbortableTask):
 
     def __call__(self, containerConfigs: list[dict], runDir: str|Path, benchmarks: list[dict]) -> None:
@@ -36,7 +36,7 @@ class ExecuteRun(AbortableTask):
         self.benchmarks = sorted(benchmarks, key=lambda x: x['name'])
 
         self.archiveName = self.runID
-        
+
         self.configure_logging()
 
         self.redis = configure_redis()
@@ -88,7 +88,7 @@ class ExecuteRun(AbortableTask):
 
         def get_container_mounts(containerID):
             try:
-                container = self.dockerClient.containers.get(containerID) 
+                container = self.dockerClient.containers.get(containerID)
                 return container.attrs['Mounts']
             except docker.errors.NotFound:
                 print("Container not found.")
@@ -96,7 +96,7 @@ class ExecuteRun(AbortableTask):
         containerID = socket.gethostname()
 
         for mount in get_container_mounts(containerID):
-            if "/app/data" in mount['Destination']: 
+            if "/app/data" in mount['Destination']:
                 return Path(mount['Source'])
 
 
@@ -136,13 +136,13 @@ class ExecuteRun(AbortableTask):
         """
         send updates about the current progress of execution
         via the "run_progress" channel
-        """   
+        """
         isExecuted = "True"
         if status in {'error', 'failure', 'aborted', 'finished'}:
             isExecuted = "False"
         elif status == 'running':
             msg = f"{msg} (in {self.currentBenchmark['general']['pretty_name']})"
-        
+
         progressUpdate = {
             "type"           : "container",
             "status"         : status,
@@ -159,7 +159,7 @@ class ExecuteRun(AbortableTask):
             self.publish_to_sse(progressUpdate, "run_progress")
 
 
-    def wait_for_container(self, container, detectorName: str) -> bool: 
+    def wait_for_container(self, container, detectorName: str) -> bool:
         """
         wait for:
             a) container execution to finish  or
@@ -190,7 +190,7 @@ class ExecuteRun(AbortableTask):
                 self.abortHeartbeats.set()
                 print("container removed")
                 raise Exception("Task aborted")
-            
+
 
     def create_benchmark_volume(self) -> None:
         """
@@ -199,14 +199,14 @@ class ExecuteRun(AbortableTask):
         """
         self.log.trace("create shared benchmark volume")
 
-        benchmark = self.currentBenchmark 
+        benchmark = self.currentBenchmark
         volumeName=f"{self.runID}_benchmark_{benchmark['name']}_shared_volume"
 
         volume = self.dockerClient.volumes.create(name=volumeName)
 
         self.currentBenchmark["volume"] = volume
-            
-           
+
+
     def run_benchmark_container(self) -> None:
         """
         Create and run a container for the current benchmark,
@@ -215,7 +215,7 @@ class ExecuteRun(AbortableTask):
         This volume is used to share the benchmark dataset with
         containers that run clone detector tools.
         """
-        benchmark = self.currentBenchmark 
+        benchmark = self.currentBenchmark
 
         self.send_progress_update(status="running", msg=f"preparing container for benchmark: '{benchmark['general']['pretty_name']}'")
 
@@ -247,38 +247,38 @@ class ExecuteRun(AbortableTask):
         self.currentBenchmark["container"]["obj"] = container
         container.stop(timeout=5)
 
-    
+
     def stop_benchmark_container(self) -> None:
         """
-        Stop and delete the current benchmark container, 
+        Stop and delete the current benchmark container,
         where the benchmark dataset (clone files) are stored.
         """
-        self.log.trace("stop and remove benchmark container")
+        self.log.trace("benchmark container will be stopped and removed")
 
         if "obj" in self.currentBenchmark["container"]:
             container = self.currentBenchmark["container"]["obj"]
             container.stop()
 
-        
+
     def remove_benchmark_volume(self) -> None:
         """
         Remove the current benchmark volume.
         This volume is used to share the benchmark dataset with
         the clone detector tool containers.
         """
-        self.log.trace("stop and remove shared benchmark volume")
+        self.log.trace("shared benchmark volume will be removed")
 
         try:
             volume = self.currentBenchmark["volume"]
         except KeyError:
             return
-              
+
         try:
             self.dockerClient.volumes.get(volume.name)
         except docker.errors.NotFound:
             # if volume does not exist: done
             return
-        
+
         while True:
             # try to remove volume
             try:
@@ -291,7 +291,7 @@ class ExecuteRun(AbortableTask):
                 else:
                     print(f"Warning: {exc}")
                     print(f"Warning Exception type: {type(exc)}")
-                # short time delay to ensure docker recognizes that all linked containers are removed. 
+                # short time delay to ensure docker recognizes that all linked containers are removed.
                 sleep(1)
                 #raise exc
 
@@ -317,18 +317,18 @@ class ExecuteRun(AbortableTask):
         Note: Ensures the file exists at the specified path within this container by touching it, as Docker does not
         automatically create mount paths.
         """
-        
+
         # only the config files (entrypoint.cfg and tool config) have special paths
         if pathInContainer:
             pathInContainer = Path(pathInContainer)
         else:
-            # Remove special characters from the name of the file in the container 
+            # Remove special characters from the name of the file in the container
             # to ensure that there are no problems with applications in the container (such as detectClones)
             simpleFileName, _  = convert_to_image_name(fileName, preserveSuffix=True)
             pathInContainer = Path(detector['container']['mountpoint_base']) / simpleFileName
 
         paths = SimpleNamespace(
-            filename        = fileName, 
+            filename        = fileName,
             # path to file in this container
             path            = str(self.runDir / self.currentBenchmark['name'] / detectorName / fileName),
             # path to file in host system (outside of this container)
@@ -341,14 +341,14 @@ class ExecuteRun(AbortableTask):
         Path(paths.path).touch(exist_ok= True)
 
         return paths
-    
+
 
     def _prepare_mount_points(self, detectorName: str, detector: dict) -> list:
         """
         Prepares and returns a list of mount points for a Docker container. These mount points include:
         - The benchmark detectClones CSV file
         - The benchmark evaluateTool report file
-        - The configuration file for the clone detector tool 
+        - The configuration file for the clone detector tool
         - The configuration file for the entrypoint script (entrypoint.cfg)
         - A file for verbose logging
 
@@ -403,31 +403,31 @@ class ExecuteRun(AbortableTask):
 
         # Define mounts
         mounts = [
-            # detectClones storage mount (.CSV file) 
-            docker.types.Mount( 
-                source=csvFile.hostPath, 
-                target=csvFile.containerPath, 
+            # detectClones storage mount (.CSV file)
+            docker.types.Mount(
+                source=csvFile.hostPath,
+                target=csvFile.containerPath,
                 type='bind' ),
             # evaluateTool storage mount (.report file)
-            docker.types.Mount( 
-                source=reportFile.hostPath, 
-                target=reportFile.containerPath, 
+            docker.types.Mount(
+                source=reportFile.hostPath,
+                target=reportFile.containerPath,
                 type='bind' ),
             # mount config file of clone detector
-            docker.types.Mount( 
-                source=detectorToolConfigFile.hostPath, 
-                target=detectorToolConfigFile.containerPath, 
+            docker.types.Mount(
+                source=detectorToolConfigFile.hostPath,
+                target=detectorToolConfigFile.containerPath,
                 type='bind' ),
             # mount config file of entrypoint.py script (entrypoint.cfg)
-            docker.types.Mount( 
-                source=entrypointConfigFile.hostPath, 
-                target=entrypointConfigFile.containerPath, 
-                type='bind', 
+            docker.types.Mount(
+                source=entrypointConfigFile.hostPath,
+                target=entrypointConfigFile.containerPath,
+                type='bind',
                 read_only=True ),
             # verbose logging file mount (verbose.log file)
-            docker.types.Mount( 
-                source=verboseLogFile.hostPath, 
-                target=verboseLogFile.containerPath, 
+            docker.types.Mount(
+                source=verboseLogFile.hostPath,
+                target=verboseLogFile.containerPath,
                 type='bind' ),
         ]
         return mounts
@@ -511,7 +511,7 @@ class ExecuteRun(AbortableTask):
 
         self.logFile = self.runDir / "run.log"
         self.log.add(self.logFile, format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}", level="TRACE")
-        
+
 
     def success(self) -> None:
         """
@@ -613,12 +613,12 @@ class ExecuteRun(AbortableTask):
             self.log.error(exc)
             self.failure()
             raise exc
-        
+
 
     def run_containers(self):
         """
         This method orchestrates the setup, execution, and cleanup phases for running benchmark containers and their respective detectors.
-        
+
         The workflow for each detector includes:
         - Creating a shared benchmark volume.
         - Running a benchmark container to pupulate the benchmark volume with the clone dataset.
@@ -626,8 +626,8 @@ class ExecuteRun(AbortableTask):
         - Generating/updating the statistic file based on the 'evaluateTool' report of the benchmark in the detector container.
         - Stopping the benchmark container.
         - Removing the shared benchmark volume.
-        
-        For each detector, a new benchmark volume and container are created to isolate the benchmark files. 
+
+        For each detector, a new benchmark volume and container are created to isolate the benchmark files.
         This prevents modifications by any detector tool, ensuring consistent and comparable results across all detector tool executions.
         """
         for detector in self.containerConfigs:
@@ -646,13 +646,13 @@ class ExecuteRun(AbortableTask):
                 self.log.info(f"Executing in benchmark: {self.currentBenchmark['general']['pretty_name']}")
 
                 self.run_containers()
-            
+
             self.success()
         except Exception as exc:
             self.handle_run_exception(exc)
-            
+
         #self.create_archive()
-    
+
     def start(self) -> None:
         self.log.info(f"Run '{self.runID}' started")
         # send startup message to SSE progress channel, to notifiy about a new run

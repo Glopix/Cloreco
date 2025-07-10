@@ -1,5 +1,5 @@
 # NiCad
-# docker build . -t ghcr.io/glopix/cloreco-images/ni-cad:latest
+# docker build . -t ghcr.io/glopix/cloreco-images/nicad:latest
 
 FROM ghcr.io/glopix/cloreco-images/detector-tool-base:latest
 
@@ -15,7 +15,7 @@ RUN mkdir -p /tmp/txl    && \
     tar -xf /tmp/5150-txl10.8b.linux64.tar.gz -C /tmp/txl/ --strip-components 1    && \
     rm /tmp/5150-txl10.8b.linux64.tar.gz    && \
     cd /tmp/txl/    && \
-# install Txl compiler / interpreter    
+# install Txl compiler / interpreter
     ./InstallTxl    && \
     rm -rf /tmp/txl/
 
