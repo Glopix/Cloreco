@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
 """
-This script is designed to automate the building and pushing of Docker images 
-for various combinations of OS distributions and Java Development Kits (JDKs). 
+This script is designed to automate the building and pushing of Docker images
+for various combinations of OS distributions and Java Development Kits (JDKs).
 
-It accepts several command-line arguments to customize the build process, including: 
-- an access token 
-- a version tag, 
-- a single directory to execute the build process instead of all subdirectories,
-- directories to exclude from the build process.
+It accepts several command-line arguments to customize the build process, including:
+- an access token, required if any clone detector tools are located in private repositories
+- a version tag,
+- a single directory (clone detector tool) to execute the build process instead of all subdirectories (clone detector tools),
+- directories (clone detector tools) to exclude from the build process.
 The script also prunes unused Docker resources after building to reduce the storage usage.
+
+Example usage:
+./docker-build.py --access-token glpat-xxxXXXXxxxxx  --excluded-directories iclones
 """
 
 import os
@@ -22,11 +25,11 @@ repo = 'ghcr.io/glopix/cloreco-images'
 path = Path(__file__).parent
 
 parser = ArgumentParser()
-parser.add_argument("-a", "--access-token", 
+parser.add_argument("-a", "--access-token",
                     help="(GitLab/GitHub) Access Token")
-parser.add_argument("-v", "--version-tag", 
+parser.add_argument("-v", "--version-tag",
                     help="give each image a version tag  (e.g. 1.0)", default=None)
-parser.add_argument("-d", "--directory", 
+parser.add_argument("-d", "--directory",
                     help="execute docker build for this directory only")
 parser.add_argument("-e", "--excluded-directories", nargs="*",
                     help="exclude these directories from docker build")
@@ -37,7 +40,7 @@ print(args.excluded_directories)
 if args.excluded_directories:
     excluded_dirs.extend(args.excluded_directories)
 
-# combination of OS distributions and JDK versions, 
+# combination of OS distributions and JDK versions,
 # used to build different detector-tool-base images (detector-tool-base:ubuntu:XX.04-jdkX)
 dist_jdks = [
     {"distro" : 'ubuntu:22.04', "jdk" : 'openjdk-21-jdk'},
@@ -72,7 +75,7 @@ def dockerBuild(dir: Path, version=None):
                 version_tag = ""
 
             print(f"\033[93m==============> building {image_name}:{tag} \033[00m")
-            
+
             # build image
             # {image_name}:{tag} --> detector-tool-base:ubuntu:XX.04-jdkX
             subprocess.run(f""" docker build . -t {image_name}:{tag} {version_tag} --build-arg DISTRO={distro} --build-arg JDK_VERSION={jdk}""", shell=True, capture_output=False, check=True)
@@ -83,12 +86,12 @@ def dockerBuild(dir: Path, version=None):
         version_tag = f" -t {image_name}:v{version} "
     else:
         version_tag = ""
-    
+
     print(f"\033[93m==============> building {image_name}:{tag} \033[00m")
-    
+
     # build image
     subprocess.run(f""" docker build . -t {image_name} {version_tag} {build_arg_token} """, shell=True, capture_output=False, check=True)
-    
+
     # push all local versions of this image
     subprocess.run(f""" docker push {image_name} --all-tags """, shell=True, capture_output=False, check=True)
 
@@ -113,6 +116,6 @@ for dir in dirs:
         dockerBuild(dir, version=args.version_tag)
     else:
         continue
-    
+
 subprocess.run(f"""docker system prune --force""", shell=True, capture_output=False, check=True)
 exit()
