@@ -1,0 +1,12 @@
+level=method
+compressed=true
+persistent=false
+minSize=6
+ignoreUnaryAtLiterals=true
+ignoreAnnotations=true
+batchFileSize=1000
+index=simplified
+rename=blind
+sourceDir = /cloneDetection/benchmark/
+outputFile = drdup-output.xml
+command = findClones

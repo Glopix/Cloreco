@@ -1,0 +1,29 @@
+services:
+  drduplex:
+    depends_on:
+      - benchmark
+    image: ghcr.io/glopix/cloreco-images/dr-dup-lex
+    container_name: drduplex
+    volumes:
+      # mount config file
+      - ./drdup_config.properties:/cloneDetection/Applications/drDupLex/drDupLex-mounted.config
+
+      # mount config file of BigCloneEval commands (used by entrypoint.py)
+      - ./entrypoint.cfg:/cloneDetection/entrypoint.cfg
+
+      # directory: report from detectClones
+      - ../reports/:/cloneDetection/reports/
+      # directory: final report from evaluateTool
+      - ../evaluation/:/cloneDetection/evaluation/
+
+      - share:/cloneDetection/benchmark
+
+    entrypoint: ["/bin/bash", "-c", "sleep 900000"]
+
+  benchmark:
+    image: ghcr.io/glopix/cloreco-images/big-clone-eval-benchmark
+    volumes:
+      - share:/cloneDetection/BigCloneEval
+
+volumes:
+  share:

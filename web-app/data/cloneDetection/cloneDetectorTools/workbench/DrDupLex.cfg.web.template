@@ -1,0 +1,42 @@
+[general]
+pretty_name = DrDupLex
+description = Repo: <a href="https://github.com/tronicek/DrDupLex">https://github.com/tronicek/DrDupLex</a> <br>Paper: <a href="https://doi.org/10.1016/j.infsof.2021.106805">https://doi.org/10.1016/j.infsof.2021.106805</a>
+
+[container]
+image = ghcr.io/glopix/cloreco-images/dr-dup-lex:latest
+mountpoint_base = /cloneDetection/
+mountpoint_detector_config = /cloneDetection/Applications/drDupLex/drDupLex-mounted.config
+mountpoint_entrypoint_config = /cloneDetection/entrypoint.cfg
+
+[benchmark-argument-descriptions]
+max_files = The maximum number of files this tool can handle. If the number of benchmark files exceeds this limit, the benchmark dataset will be automatically divided into multiple partitions to bypass the tool's scalability constraints.
+logging_verbose = Save stdout and stderr of the detector tool in a log file? (true or false)
+
+[benchmark-argument-defaults]
+max_files = 100000
+logging_verbose = False
+
+[detector-argument-descriptions]
+level = specifies the granularity of the index; accepted values are "method" and "statement"
+compressed = specifies whether the index is compressed or not; accepted values are "true" and "false"
+persistent = specifies whether the index is built in main memory or on secondary storage; accepted values are "true" and "false"
+minSize = specifies the minimum number of lines; for example, if minSize is 5, the code fragment must have at least 5 lines to be reported
+ignoreUnaryAtLiterals = specifies how the unary plus and minus are treated; accepted values are "true" and "false"
+ignoreAnnotations = specifies whether annotations in code are taken into account; accepted values are "true" and "false"
+batchFileSize = specifies how many files are processed before the index in memory is merged with the persistent index
+index = ??
+rename = ??
+
+[detector-argument-defaults]
+level = method
+compressed = true
+persistent = false
+minSize = 6
+ignoreUnaryAtLiterals = true
+ignoreAnnotations = true
+treatNullAsLiteral = true
+treatSuperThisAsIdentifier = true
+treatVoidAsType = true
+batchFileSize = 1000
+index = simplified
+rename = blind
