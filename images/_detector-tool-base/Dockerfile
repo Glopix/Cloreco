@@ -14,11 +14,12 @@ ENV LANG=C.UTF-8 \
 WORKDIR /cloneDetection/
 
 # for test and debugging purposes, could be removed to reduce image size
-COPY --from=ghcr.io/glopix/cloreco-images/big-clone-eval-base /cloneDetection /cloneDetection
+#COPY --from=ghcr.io/glopix/cloreco-images/big-clone-eval-base /cloneDetection /cloneDetection
 
 # install dependencies
 RUN apt-get update    && \
-    apt-get install ${JDK_VERSION} git python3 --no-install-recommends --yes
+    apt-get install ${JDK_VERSION} git python3 --no-install-recommends --yes && \
+    rm -rf /var/lib/apt/lists/*
 
 # prepare report directory
 RUN mkdir -p /cloneDetection/reports/
