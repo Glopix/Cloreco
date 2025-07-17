@@ -25,11 +25,11 @@ services:
 
       #SKIP_IMAGES_CHECK_ON_STARTUP: True
 
-      # push new images ( created via 'add new Tool' web page) to the container registry?
+      # push new images ( created via 'add new Tool' web page) to the container image registry?
       PUSH_CREATED_IMAGES_TO_CONTAINER_REGISTRY: False
-    env_file:
-      # container registry credentials
-      - .env
+#    env_file:
+#   #  container image registry credentials
+#      - .env
     volumes:
     # data directory
       - ./data/:/app/data/
