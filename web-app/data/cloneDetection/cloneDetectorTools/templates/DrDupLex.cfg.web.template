@@ -17,15 +17,15 @@ max_files = 100000
 logging_verbose = False
 
 [detector-argument-descriptions]
-level = specifies the granularity of the index; accepted values are "method" and "statement"
-compressed = specifies whether the index is compressed or not; accepted values are "true" and "false"
-persistent = specifies whether the index is built in main memory or on secondary storage; accepted values are "true" and "false"
+level = specifies the granularity of the index. <br>Accepted values: "method" or "statement"
+compressed = specifies whether the index is compressed or not. <br>Accepted values: "true" or "false"
+persistent = specifies whether the index is built in main memory or on secondary storage. <br>Accepted values: "true" or "false"
 minSize = specifies the minimum number of lines; for example, if minSize is 5, the code fragment must have at least 5 lines to be reported
-ignoreUnaryAtLiterals = specifies how the unary plus and minus are treated; accepted values are "true" and "false"
-ignoreAnnotations = specifies whether annotations in code are taken into account; accepted values are "true" and "false"
+ignoreUnaryAtLiterals = specifies how the unary plus and minus are treated. <br>Accepted values: "true" or "false"
+ignoreAnnotations = specifies whether annotations in code are taken into account. <br>Accepted values: "true" or "false"
 batchFileSize = specifies how many files are processed before the index in memory is merged with the persistent index
-index = ??
-rename = ??
+index = specifies the type of index. <br>Accepted values: "full" or "simplified". For the method-level clone detection, it will be "simplified".
+rename = specifies how identifiers are renamed. <br>Accepted values: "blind" or "consistent". <br>"blind" means that all identifiers will be considered equal (renamed clones will be reported), and the value of "consistent" means that identifiers will be systematically renamed (parameterized clones will be reported).
 
 [detector-argument-defaults]
 level = method
